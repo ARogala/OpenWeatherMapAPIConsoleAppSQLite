@@ -19,7 +19,7 @@ The three api endpoints in use are
 2. 5 day forecast endpoint https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={APIkey}
 3. Location endpoint http://api.openweathermap.org/geo/1.0/direct?q={cityName},{stateCode},{countryCode}&limit={limit}&appid={APIkey}
 
-The app will save your locations in SavedLocation.xml and your api key in APIKEY.xml
+The app will save your locations in SavedLocations.xml and your api key in APIKEY.xml
 The default location is always the first in the list and is changeable.
 Multiple locations can be added. 
 
