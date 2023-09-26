@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Locations>
+	<Location id="0">
+		<City>Denville</City>
+		<StateCode>NJ</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="1">
+		<City>Highland Lakes</City>
+		<StateCode>NJ</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="2">
+		<City>Wyckoff</City>
+		<StateCode>NJ</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="3">
+		<City>Salida</City>
+		<StateCode>CO</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+</Locations>
