@@ -35,7 +35,6 @@ namespace OpenWeatherMap
                
             //load XML Docs
             ManageXML.LoadXML("APIKEY.xml");
-            //locationsDoc = LoadXML("SavedLocations.xml");
             ManageXML.LoadXML("SavedLocations.xml");
 
             //get api key from XML if empty set it
@@ -249,6 +248,7 @@ namespace OpenWeatherMap
 
                }));
         }
+
         private static string AskStateCode()
         {
             return AnsiConsole.Prompt(
@@ -272,6 +272,7 @@ namespace OpenWeatherMap
                         
                 }));
         }
+
         private static string GetChoice()
         {
             string choice = AnsiConsole.Prompt(
