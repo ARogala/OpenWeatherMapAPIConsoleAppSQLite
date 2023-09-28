@@ -281,9 +281,9 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Add a new location", "Switch default location", "Remove a saved location",
                         "Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast",
-                        "Get 5 day forecast from a saved location","Display saved forecast","List all saved locations","Quit"
+                        "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
+                        "Switch default location", "Remove a saved location","List all saved locations","Quit"
                     }));
             return choice;
         }
