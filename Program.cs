@@ -42,7 +42,7 @@ namespace OpenWeatherMap
             apiKey = ManageXML.GetAPIKey();
             if (apiKey == "")
             {
-                DisplayHeader();
+                ManageConsoleDisplay.DisplayHeader();
                 AnsiConsole.WriteLine("No Open Weather Map API key detected you need to input one.");
                 string inputApiKey = AnsiConsole.Ask<string>("What's your [green]API Key[/]?");
                 if (inputApiKey != "")
@@ -59,7 +59,7 @@ namespace OpenWeatherMap
             savedLocationsList = ManageXML.GetSavedLocations();
             if (savedLocationsList.Count == 0)
             {
-                DisplayHeader();
+                ManageConsoleDisplay.DisplayHeader();
                 AnsiConsole.WriteLine("No saved location found please enter one.");
                 AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
                 List<string> newLocation = GetNewLocationInput();
@@ -75,13 +75,13 @@ namespace OpenWeatherMap
                 if (AnsiConsole.Confirm("There is saved weather data. Type y to display saved data or n to get new weather."))
                 {
                     AnsiConsole.Clear();
-                    DisplayHeader();
+                    ManageConsoleDisplay.DisplayHeader();
                     GetAndDisplaySavedWeather();
                 }
                 else
                 {
                     AnsiConsole.Clear();
-                    DisplayHeader();
+                    ManageConsoleDisplay.DisplayHeader();
                     location = await ManageAPICalls.GetLocation(0, true);
                     currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                     DisplayCurrentWeather(location, currentWeather);
@@ -89,7 +89,7 @@ namespace OpenWeatherMap
             }
             else
             {
-                DisplayHeader();
+                ManageConsoleDisplay.DisplayHeader();
                 location = await ManageAPICalls.GetLocation(0, true);
                 currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                 DisplayCurrentWeather(location, currentWeather);
@@ -107,7 +107,7 @@ namespace OpenWeatherMap
                 {
                     case "Add a new location":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         List<string> newLocation = GetNewLocationInput();
                         ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
                         AnsiConsole.Clear();
@@ -115,7 +115,7 @@ namespace OpenWeatherMap
                         break;
                     case "Switch default location":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         ushort index1 = ChooseLocation();
                         ManageXML.ChangeDefaultLocation(index1);
                         //get weather for new default location
@@ -126,14 +126,14 @@ namespace OpenWeatherMap
                         break;
                     case "Remove a saved location":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         ushort index2 = ChooseLocation();
                         ManageXML.RemoveLocation(index2);
                         choice = GetChoice();
                         break;
                     case "Update weather":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         location = await ManageAPICalls.GetLocation(0, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                         DisplayCurrentWeather(location, currentWeather);    
@@ -141,7 +141,7 @@ namespace OpenWeatherMap
                         break;
                     case "Get weather from a saved location":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         ushort index3 = ChooseLocation();
                         location = await ManageAPICalls.GetLocation(index3, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
@@ -150,13 +150,13 @@ namespace OpenWeatherMap
                         break;
                     case "Display saved weather":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         GetAndDisplaySavedWeather();
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         location = await ManageAPICalls.GetLocation(0, false);
                         forecastWeather = await ManageAPICalls.GetForecast(location);
                         DisplayForecastWeather(location, forecastWeather);
@@ -164,7 +164,7 @@ namespace OpenWeatherMap
                         break;
                     case "Get 5 day forecast from a saved location":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         ushort index4 = ChooseLocation();
                         location = await ManageAPICalls.GetLocation(index4, false);
                         forecastWeather = await ManageAPICalls.GetForecast(location);
@@ -173,7 +173,7 @@ namespace OpenWeatherMap
                         break;
                     case "Display saved forecast":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         if (ManageSavedWeatherText.GetForecastText() != "")
                         {
                             GetAndDisplaySavedForecast();
@@ -186,7 +186,7 @@ namespace OpenWeatherMap
                         break;
                     case "List all saved locations":
                         AnsiConsole.Clear();
-                        DisplayHeader();
+                        ManageConsoleDisplay.DisplayHeader();
                         ListAllSavedLocations();
                         choice = GetChoice();
                         break;
@@ -206,15 +206,7 @@ namespace OpenWeatherMap
             }
             AnsiConsole.WriteLine("");
         }
-        private static void DisplayHeader()
-        {
-            Grid headerGrid = new Grid();
-            headerGrid.AddColumn();
-            headerGrid.AddRow(new FigletText("Weather App").Centered().Color(Color.Green));
-            headerGrid.AddRow(Align.Center(new Panel("[green bold]Powered by: [link]https://openweathermap.org[/][/]").NoBorder()));
-            AnsiConsole.Write(headerGrid);
-        }
-
+        
         private static List<string> GetNewLocationInput()
         {
             List<string> input = new List<string>();
