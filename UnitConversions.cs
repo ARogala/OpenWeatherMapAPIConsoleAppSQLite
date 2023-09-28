@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenWeatherMap
 {
-    internal class Conversions
+    internal class UnitConversions
     {
         public static DateTime UnixTimeStampToDateTime(long unixTimeStamp, bool toLocal)
         {

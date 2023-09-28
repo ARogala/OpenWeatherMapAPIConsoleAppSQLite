@@ -67,7 +67,7 @@ namespace OpenWeatherMap
                 //markup.Add(new Markup($"[bold green]Pressure Ground Level hPa: [/]{currentWeather.Main.grnd_level} hPa"));
                 markup.Add(new Markup($"[bold green]Humidity: [/]{currentWeather.Main.humidity} %"));
                 markup.Add(new Markup("[blue]The maximum value of the visibility is 10 km or 10000 m or about 6.2137 miles[/]"));
-                markup.Add(new Markup($"[bold green]Visibility: [/]{String.Format("{0:0.0000}", Conversions.MetersToMiles(currentWeather.Visibility))} miles"));
+                markup.Add(new Markup($"[bold green]Visibility: [/]{String.Format("{0:0.0000}", UnitConversions.MetersToMiles(currentWeather.Visibility))} miles"));
                 markup.Add(new Markup($"[bold green]Wind Speed: [/]{currentWeather.Wind.speed} miles/hr"));
                 markup.Add(new Markup("[blue]The first and the most important thing to remember: wind direction is always determined " +
                     "by where the wind is blowing FROM, not where it is blowing towards. " +
@@ -75,24 +75,24 @@ namespace OpenWeatherMap
                     "For example, a northerly wind blows from the north to the south. Wind direction is measured in degrees clockwise from due north. " +
                     "Hence, a wind coming from the south has a wind direction of 180 degrees; one from the east is 90 degrees.[/]"));
                 markup.Add(new Markup($"[bold green]Wind Direction: [/]{currentWeather.Wind.deg} degrees"));
-                markup.Add(new Markup($"[bold green]Wind Cardinal Direction: [/]{Conversions.WindDegToDir(currentWeather.Wind.deg)}"));
+                markup.Add(new Markup($"[bold green]Wind Cardinal Direction: [/]{UnitConversions.WindDegToDir(currentWeather.Wind.deg)}"));
                 markup.Add(new Markup($"[bold green]Wind Gusts: [/]{currentWeather.Wind.gust} miles/hr"));
                 markup.Add(new Markup($"[bold green]Cloud Cover: [/]{currentWeather.Clouds.all} %"));
 
                 if (currentWeather.Rain != null)
                 {
-                    markup.Add(new Markup($"[bold green]Rain Volume Last Hour: [/]{String.Format("{0:0.0000}", Conversions.mmToInch(currentWeather.Rain.hr1))} inches"));
-                    markup.Add(new Markup($"[bold green]Rain Volume Last 3 Hours: [/]{String.Format("{0:0.0000}", Conversions.mmToInch(currentWeather.Rain.hr3))} inches"));
+                    markup.Add(new Markup($"[bold green]Rain Volume Last Hour: [/]{String.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Rain.hr1))} inches"));
+                    markup.Add(new Markup($"[bold green]Rain Volume Last 3 Hours: [/]{String.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Rain.hr3))} inches"));
                 }
                 if (currentWeather.Snow != null)
                 {
-                    markup.Add(new Markup($"[bold green]Snow Volume Last Hour: [/]{String.Format("{0:0.0000}", Conversions.mmToInch(currentWeather.Snow.hr1))} inches"));
-                    markup.Add(new Markup($"[bold green]Snow Volume Last 3 Hours: [/]{String.Format("{0:0.0000}", Conversions.mmToInch(currentWeather.Snow.hr3))} inches"));
+                    markup.Add(new Markup($"[bold green]Snow Volume Last Hour: [/]{String.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Snow.hr1))} inches"));
+                    markup.Add(new Markup($"[bold green]Snow Volume Last 3 Hours: [/]{String.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Snow.hr3))} inches"));
                 }
                 markup.Add(new Markup("[blue]Note: Time is converted to local time. So if you chosen location is far away from your location times will appear incorrectly.[/]"));
-                markup.Add(new Markup($"[bold green]Time Of Data Calculation: [/]{Conversions.UnixTimeStampToDateTime(currentWeather.UnixTimeStamp, true)}"));
-                markup.Add(new Markup($"[bold green]Sunrise: [/]{Conversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunrise, true)}"));
-                markup.Add(new Markup($"[bold green]Sunset: [/]{Conversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunset, true)}"));
+                markup.Add(new Markup($"[bold green]Time Of Data Calculation: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.UnixTimeStamp, true)}"));
+                markup.Add(new Markup($"[bold green]Sunrise: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunrise, true)}"));
+                markup.Add(new Markup($"[bold green]Sunset: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunset, true)}"));
                 markup.Add(new Markup($"[bold green]City: [/]{currentWeather.Name}"));
             }
 
@@ -125,7 +125,7 @@ namespace OpenWeatherMap
                 List<Markup> markup = new List<Markup>();
                 List<WeatherRecord> wther = forecastRecord.Weather;
                 markup.Add(new Markup($"[bold green]Time of Data Forecasted: [/][bold blue]{forecastRecord.TimeDataForecastedISO_UTC}[/]"));
-                markup.Add(new Markup($"[bold green]Time Of Data Forecasted: [/][bold blue]{Conversions.UnixTimeStampToDateTime(forecastRecord.TimeDataForecastedUNIX_UTC, false)}[/]"));
+                markup.Add(new Markup($"[bold green]Time Of Data Forecasted: [/][bold blue]{UnitConversions.UnixTimeStampToDateTime(forecastRecord.TimeDataForecastedUNIX_UTC, false)}[/]"));
 
                 foreach (WeatherRecord weather in wther)
                 {
@@ -134,11 +134,11 @@ namespace OpenWeatherMap
                 markup.Add(new Markup($"[bold green]Probability of Precipitation: [/][bold blue]{forecastRecord.ProbabilityPrecipitation}[/]"));
                 if (forecastRecord.Rain != null)
                 {
-                    markup.Add(new Markup($"[bold green]Rain Volume Last 3 Hours: [/][bold blue]{String.Format("{0:0.0000}", Conversions.mmToInch(forecastRecord.Rain.hr3))} inches[/]"));
+                    markup.Add(new Markup($"[bold green]Rain Volume Last 3 Hours: [/][bold blue]{String.Format("{0:0.0000}", UnitConversions.mmToInch(forecastRecord.Rain.hr3))} inches[/]"));
                 }
                 if (forecastRecord.Snow != null)
                 {
-                    markup.Add(new Markup($"[bold green]Snow Volume Last 3 Hours: [/][bold blue]{String.Format("{0:0.0000}", Conversions.mmToInch(forecastRecord.Snow.hr3))} inches[/]"));
+                    markup.Add(new Markup($"[bold green]Snow Volume Last 3 Hours: [/][bold blue]{String.Format("{0:0.0000}", UnitConversions.mmToInch(forecastRecord.Snow.hr3))} inches[/]"));
                 }
                 markup.Add(new Markup($"[bold green]Temperture: [/][bold blue]{forecastRecord.Main.temp} Degrees F[/]"));
                 markup.Add(new Markup("--------------------------------------------------------------------------------------------"));
@@ -146,22 +146,22 @@ namespace OpenWeatherMap
                 markup.Add(new Markup($"[bold green]Pressure Sea Level hPa: [/]{forecastRecord.Main.pressure} hPa"));
                 markup.Add(new Markup($"[bold green]Pressure Ground Level hPa: [/]{forecastRecord.Main.grnd_level} hPa"));
                 markup.Add(new Markup($"[bold green]Humidity: [/]{forecastRecord.Main.humidity} %"));
-                markup.Add(new Markup($"[bold green]Visibility: [/]{String.Format("{0:0.0000}", Conversions.MetersToMiles(forecastRecord.Visibility))} miles"));
+                markup.Add(new Markup($"[bold green]Visibility: [/]{String.Format("{0:0.0000}", UnitConversions.MetersToMiles(forecastRecord.Visibility))} miles"));
                 markup.Add(new Markup($"[bold green]Wind Speed: [/]{forecastRecord.Wind.speed} miles/hr"));
                 markup.Add(new Markup($"[bold green]Wind Direction: [/]{forecastRecord.Wind.deg} degrees"));
-                markup.Add(new Markup($"[bold green]Wind Cardinal Direction: [/]{Conversions.WindDegToDir(forecastRecord.Wind.deg)}"));
+                markup.Add(new Markup($"[bold green]Wind Cardinal Direction: [/]{UnitConversions.WindDegToDir(forecastRecord.Wind.deg)}"));
                 markup.Add(new Markup($"[bold green]Wind Gusts: [/]{forecastRecord.Wind.gust} miles/hr"));
                 markup.Add(new Markup($"[bold green]Cloud Cover: [/]{forecastRecord.Clouds.all} %"));
 
 
                 markup.Add(new Markup($"[bold green]City: [/]{forecastWeather.City.name}"));
                 markup.Add(new Markup($"[bold green]Population: [/]{String.Format("{0:n0}", forecastWeather.City.population)}"));
-                markup.Add(new Markup($"[bold green]Sunrise: [/]{Conversions.UnixTimeStampToDateTime(forecastWeather.City.sunrise, true)}"));
-                markup.Add(new Markup($"[bold green]Sunset: [/]{Conversions.UnixTimeStampToDateTime(forecastWeather.City.sunset, true)}"));
+                markup.Add(new Markup($"[bold green]Sunrise: [/]{UnitConversions.UnixTimeStampToDateTime(forecastWeather.City.sunrise, true)}"));
+                markup.Add(new Markup($"[bold green]Sunset: [/]{UnitConversions.UnixTimeStampToDateTime(forecastWeather.City.sunset, true)}"));
 
                 Rows forecastRows = new Rows(markup);
                 Panel forecastPanel = new Panel(forecastRows);
-                forecastPanel.Header = new PanelHeader($"Forecast Weather: [bold blue]{Conversions.UnixTimeStampToDateTime(forecastRecord.TimeDataForecastedUNIX_UTC, false).DayOfWeek}[/]");
+                forecastPanel.Header = new PanelHeader($"Forecast Weather: [bold blue]{UnitConversions.UnixTimeStampToDateTime(forecastRecord.TimeDataForecastedUNIX_UTC, false).DayOfWeek}[/]");
                 forecastPanel.Width = 50;
                 forecastPanels.Add(forecastPanel);
             }
