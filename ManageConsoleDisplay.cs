@@ -94,8 +94,10 @@ namespace OpenWeatherMap
                 markup.Add(new Markup($"[bold green]Sunrise: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunrise, true)}"));
                 markup.Add(new Markup($"[bold green]Sunset: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunset, true)}"));
                 markup.Add(new Markup($"[bold green]City: [/]{currentWeather.Name}"));
+                markup.Add(new Markup($"[bold green]Latitude: [/]{String.Format("{0:0.0000}", currentWeather.Coord.lat)}"));
+                markup.Add(new Markup($"[bold green]Longitude: [/]{String.Format("{0:0.0000}", currentWeather.Coord.lon)}"));
             }
-
+          
             Rows currentWeatherRows = new Rows(markup);
             Panel currentWeatherPanel = new Panel(currentWeatherRows);
             currentWeatherPanel.Header = new PanelHeader("Current Weather:");
