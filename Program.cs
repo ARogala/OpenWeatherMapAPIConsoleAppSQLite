@@ -114,6 +114,7 @@ namespace OpenWeatherMap
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
                         ushort index2 = ChooseLocation();
+                        //if last location removed -- immediately add new one
                         if (ManageXML.RemoveLocation(index2))
                         {
                             AnsiConsole.Clear();
