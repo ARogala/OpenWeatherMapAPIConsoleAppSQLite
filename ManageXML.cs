@@ -117,12 +117,19 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
         }
-        public static void RemoveLocation(ushort index)
+        
+        //returns true if last location was removed
+        public static bool RemoveLocation(ushort index)
         {
             //location of element to change is the passed index
             List<SavedLocations> savedLocationsList = GetSavedLocations();
             savedLocationsList.RemoveAt(index);
             SaveNewLocationsList(savedLocationsList);
+            savedLocationsList = GetSavedLocations();
+            if (savedLocationsList.Count == 0)
+                return true;
+            else
+                return false;
         }
         private static void SaveNewLocationsList(List<SavedLocations> savedLocationsList)
         {

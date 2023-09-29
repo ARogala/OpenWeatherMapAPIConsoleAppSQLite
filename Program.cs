@@ -53,21 +53,8 @@ namespace OpenWeatherMap
                 AnsiConsole.Clear();
             }
 
-            //get locations from XML
-            //if none get and save one
-            savedLocationsList = ManageXML.GetSavedLocations();
-            if (savedLocationsList.Count == 0)
-            {
-                ManageConsoleDisplay.DisplayHeader();
-                AnsiConsole.WriteLine("No saved location found please enter one.");
-                AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
-                List<string> newLocation = GetNewLocationInput();
-                
-                ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
-               
-                AnsiConsole.Clear();
-            }
-            
+            CheckForSavedLocations(ManageXML.GetSavedLocations());
+              
             //if saved weather ask to display that or get new data
             if (ManageSavedWeatherText.GetCurrentLocationText() != "" && ManageSavedWeatherText.GetCurrentWeatherText() != "")
             {
@@ -127,15 +114,20 @@ namespace OpenWeatherMap
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
                         ushort index2 = ChooseLocation();
-                        ManageXML.RemoveLocation(index2);
+                        if (ManageXML.RemoveLocation(index2))
+                        {
+                            AnsiConsole.Clear();
+                            CheckForSavedLocations(ManageXML.GetSavedLocations());
+                        }
+                        ManageConsoleDisplay.DisplayHeader();
                         choice = GetChoice();
                         break;
                     case "Update weather":
-                        AnsiConsole.Clear();
+                        AnsiConsole.Clear();   
                         ManageConsoleDisplay.DisplayHeader();
                         location = await ManageAPICalls.GetLocation(0, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
-                        ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);    
+                        ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
                     case "Get weather from a saved location":
@@ -313,6 +305,27 @@ namespace OpenWeatherMap
                 index++;
             }
             return index;
+        }
+
+        private static void CheckForSavedLocations(List<SavedLocations> savedLocationsList)
+        {
+            if (savedLocationsList.Count == 0)
+            {
+                GetAndSaveDefaultLocation();
+            }
+        }
+
+        private static void GetAndSaveDefaultLocation()
+        {
+            ManageConsoleDisplay.DisplayHeader();
+            AnsiConsole.WriteLine("No saved location found please enter one.");
+            AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
+            AnsiConsole.WriteLine("Note: If you remove all locations you will be immediately asked to add one -- the app needs location to work.");
+            List<string> newLocation = GetNewLocationInput();
+
+            ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
+
+            AnsiConsole.Clear();
         }
        
     }

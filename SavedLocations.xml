@@ -6,18 +6,33 @@
 		<CountryCode>US</CountryCode>
 	</Location>
 	<Location id="1">
-		<City>Highland Lakes</City>
+		<City>Ho-Ho-Kus</City>
 		<StateCode>NJ</StateCode>
 		<CountryCode>US</CountryCode>
 	</Location>
 	<Location id="2">
-		<City>Wyckoff</City>
+		<City>Highland Lakes</City>
 		<StateCode>NJ</StateCode>
 		<CountryCode>US</CountryCode>
 	</Location>
 	<Location id="3">
+		<City>Wyckoff</City>
+		<StateCode>NJ</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="4">
 		<City>Salida</City>
 		<StateCode>CO</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="5">
+		<City>Centennial</City>
+		<StateCode>CO</StateCode>
+		<CountryCode>US</CountryCode>
+	</Location>
+	<Location id="6">
+		<City>Plymouth</City>
+		<StateCode>NH</StateCode>
 		<CountryCode>US</CountryCode>
 	</Location>
 </Locations>
