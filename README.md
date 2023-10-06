@@ -1,5 +1,6 @@
-# Open Weather Map Console Application
+# Open Weather Map Console Application with SQLite
 
+## For the version of the app without the SQLite database go here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)
 ## Uses [Spectre Console](https://github.com/spectreconsole/spectre.console) for the display
 
@@ -19,7 +20,8 @@ The three api endpoints in use are
 2. 5 day forecast endpoint https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={APIkey}
 3. Location endpoint http://api.openweathermap.org/geo/1.0/direct?q={cityName},{stateCode},{countryCode}&limit={limit}&appid={APIkey}
 
-The app will save your locations in SavedLocations.xml and your api key in APIKEY.xml
+The app will save your locations in a SQLite database and your api key in APIKEY.xml
+You will also be able to save current weather points to the database and pull some metrics -- to be determined
 The default location is always the first in the list and is changeable.
 Multiple locations can be added. 
 
@@ -41,7 +43,7 @@ This is to help you limit the number of api calls made. You can check the most r
 Overall the app is easy to use and a fast way to check the weather and forecast by you.
 
 ## Plans
-Add SQL database to recored current weather. This way weekly average temperature and other metrics can be calculted.
+A cli branch that will add weather data points automatically to the database every hour. Run on raspberry pi to build up your weather database
 
 Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui)
 
