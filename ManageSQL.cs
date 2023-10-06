@@ -107,22 +107,22 @@ namespace OpenWeatherMap
                         SqliteCommand command = connection.CreateCommand();
                         command.CommandText =
                         @"
-                        UPDATE locations
-                        SET is_default = 0
-                        WHERE is_default = 1;
-                    ";
+                            UPDATE locations
+                            SET is_default = 0
+                            WHERE is_default = 1;
+                        ";
                         command.ExecuteNonQuery();
                         command.CommandText =
                         @"
-                        UPDATE locations
-                        SET is_default = 1
-                        WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
-                    ";
+                            UPDATE locations
+                            SET is_default = 1
+                            WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
+                        ";
                         command.Parameters.AddRange(new[] {
-                        new SqliteParameter("$city", newDefaultLocation.City),
-                        new SqliteParameter("$stateCode", newDefaultLocation.StateCode),
-                        new SqliteParameter("$countryCode", newDefaultLocation.CountryCode),
-                    });
+                            new SqliteParameter("$city", newDefaultLocation.City),
+                            new SqliteParameter("$stateCode", newDefaultLocation.StateCode),
+                            new SqliteParameter("$countryCode", newDefaultLocation.CountryCode),
+                        });
                         command.ExecuteNonQuery();
                         txn.Commit();
                     }
@@ -133,7 +133,6 @@ namespace OpenWeatherMap
                     }
                 }
             }
-            
         }
     }
 }
