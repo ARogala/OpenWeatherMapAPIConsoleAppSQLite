@@ -97,15 +97,19 @@ namespace OpenWeatherMap
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
                         List<string> newLocation = GetNewLocationInput();
-                        ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
+                        //ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
+                        //isDefault 0 false 1 true
+                        ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2],0);
                         AnsiConsole.Clear();
                         choice = GetChoice();
                         break;
                     case "Switch default location":
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
-                        ushort index1 = ChooseLocation();
-                        ManageXML.ChangeDefaultLocation(index1);
+                        //ushort index1 = ChooseLocation();
+                        //ManageXML.ChangeDefaultLocation(index1);
+                        SavedLocations newDefaultLocation = ChooseLocationSQL();
+                        ManageSQL.ChangeDefaultLocation(newDefaultLocation);
                         //get weather for new default location
                         location = await ManageAPICalls.GetLocation(0, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
@@ -283,6 +287,31 @@ namespace OpenWeatherMap
             return choice;
         }
         
+        private static SavedLocations ChooseLocationSQL()
+        {
+            savedLocationsList = ManageSQL.GetSavedLocations();
+            SelectionPrompt<string> prompt = new SelectionPrompt<string>()
+                .Title("Please select a location below")
+                .PageSize(5)
+                .MoreChoicesText("[green](Move up and down to reveal more choices)[/]");
+
+            foreach (SavedLocations location in savedLocationsList)
+            {
+                prompt.AddChoice($"{location.City} -- {location.StateCode} -- {location.CountryCode}");
+            }
+
+            string choice = AnsiConsole.Prompt(prompt);
+            //get new default location
+            SavedLocations newDefaultLocation = null;
+            foreach (SavedLocations location in savedLocationsList)
+            {
+                if ($"{location.City} -- {location.StateCode} -- {location.CountryCode}" == choice)
+                {
+                    newDefaultLocation = location;
+                }
+            }
+            return newDefaultLocation;
+        }
         private static ushort ChooseLocation()
         {
             savedLocationsList = ManageXML.GetSavedLocations();

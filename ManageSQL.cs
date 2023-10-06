@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace OpenWeatherMap
 {
@@ -87,6 +88,52 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteLine("Failed to set location from sqlite");
                 AnsiConsole.WriteException(e);
             }
+        }
+
+        //Set up as a Transaction -- it all happens or nothing happens
+        //1 update old default location's is_default column to 0 
+        //2 select choosen new default location and update its is_default column to 1
+        //3 commit txn
+        public static void ChangeDefaultLocation(SavedLocations newDefaultLocation)
+        {
+            using (connection)
+            {
+                connection.Open();
+                using (SqliteTransaction txn = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        connection.Open();
+                        SqliteCommand command = connection.CreateCommand();
+                        command.CommandText =
+                        @"
+                        UPDATE locations
+                        SET is_default = 0
+                        WHERE is_default = 1;
+                    ";
+                        command.ExecuteNonQuery();
+                        command.CommandText =
+                        @"
+                        UPDATE locations
+                        SET is_default = 1
+                        WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
+                    ";
+                        command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$city", newDefaultLocation.City),
+                        new SqliteParameter("$stateCode", newDefaultLocation.StateCode),
+                        new SqliteParameter("$countryCode", newDefaultLocation.CountryCode),
+                    });
+                        command.ExecuteNonQuery();
+                        txn.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        txn.Rollback();
+                        AnsiConsole.WriteException(e);
+                    }
+                }
+            }
+            
         }
     }
 }
