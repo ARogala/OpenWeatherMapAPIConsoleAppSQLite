@@ -326,8 +326,10 @@ namespace OpenWeatherMap
             AnsiConsole.WriteLine("Note: If you remove all locations you will be immediately asked to add one -- the app needs location to work.");
             List<string> newLocation = GetNewLocationInput();
 
-            ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
-
+            //ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);
+            //isDefault 0 false 1 true
+            ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2], 1);
+            
             AnsiConsole.Clear();
         }
        

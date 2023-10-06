@@ -11,13 +11,13 @@ namespace OpenWeatherMap
     internal static class ManageSQL
     {
         private static string connectionString = "Data Source=Weather.db";
-
+        private static SqliteConnection connection = new SqliteConnection(connectionString);
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
             try
             {
-                using (SqliteConnection connection = new SqliteConnection(connectionString))
+                using (connection)
                 {
                     connection.Open();
 
@@ -34,17 +34,11 @@ namespace OpenWeatherMap
                         {
                             while (reader.Read())
                             {
-                                //int location_id = reader.GetInt32(0);
-                                string city_name = reader.GetString(1);
-                                //float latitude = reader.GetFloat(2);
-                                //float longitude = reader.GetFloat(3);
-                                string country = reader.GetString(4);
-                                string state = reader.GetString(5);
-                                //0 false 1 true
-                                //short is_default = reader.GetInt16(6);
-
+                                string city_name = reader.GetString(0);
+                                string state = reader.GetString(1);
+                                string country = reader.GetString(2);
+                              
                                 locationsList.Add(new SavedLocations(city_name, state, country));
-                               
                             }
                         }
                     }
@@ -60,6 +54,39 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
             return locationsList;
+        }
+
+        //isDefault 0 false 1 true
+        public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault)
+        {
+            try
+            {
+                using (connection)
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        INSERT INTO locations(city_name, latitude, longitude, country, state, is_default) VALUES($city, $latNull, $lonNull, $countryCode, $stateCode, $isDefault);
+                    ";
+                    command.Parameters.AddRange(new[] { 
+                        new SqliteParameter("$city", city),
+                        new SqliteParameter("$latNull", DBNull.Value),
+                        new SqliteParameter("$lonNull", DBNull.Value),
+                        new SqliteParameter("$countryCode", countryCode),
+                        new SqliteParameter("$stateCode", stateCode),
+                        new SqliteParameter("$isDefault", isDefault)
+                    });
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception e)
+            {
+                AnsiConsole.WriteLine("Failed to set location from sqlite");
+                AnsiConsole.WriteException(e);
+            }
         }
     }
 }
