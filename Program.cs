@@ -53,7 +53,9 @@ namespace OpenWeatherMap
                 AnsiConsole.Clear();
             }
 
-            CheckForSavedLocations(ManageXML.GetSavedLocations());
+            CheckForSavedLocations(ManageSQL.GetSavedLocations());
+
+            //CheckForSavedLocations(ManageXML.GetSavedLocations());
               
             //if saved weather ask to display that or get new data
             if (ManageSavedWeatherText.GetCurrentLocationText() != "" && ManageSavedWeatherText.GetCurrentWeatherText() != "")

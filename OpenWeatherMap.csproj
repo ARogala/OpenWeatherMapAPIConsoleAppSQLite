@@ -31,6 +31,9 @@
     <None Update="SavedLocations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Weather.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="WindDirection.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
