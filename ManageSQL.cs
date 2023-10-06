@@ -134,5 +134,33 @@ namespace OpenWeatherMap
                 }
             }
         }
+
+        public static void RemoveSavedLocation(SavedLocations removeLocation)
+        {
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        DELETE FROM locations WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$city", removeLocation.City),
+                        new SqliteParameter("$stateCode", removeLocation.StateCode),
+                        new SqliteParameter("$countryCode", removeLocation.CountryCode)  
+                    });
+
+                    command.ExecuteNonQuery();
+                }
+                catch(Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to remove a saved location");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+        }
     }
 }

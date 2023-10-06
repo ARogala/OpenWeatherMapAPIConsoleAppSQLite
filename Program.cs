@@ -126,6 +126,11 @@ namespace OpenWeatherMap
                             AnsiConsole.Clear();
                             CheckForSavedLocations(ManageXML.GetSavedLocations());
                         }
+                        //get locatioin to remove
+                        //remove it
+                        //check if last location was removed -- if true add new one
+                        //check if default was removed -- if true get new default
+
                         ManageConsoleDisplay.DisplayHeader();
                         choice = GetChoice();
                         break;
