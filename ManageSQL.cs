@@ -25,7 +25,7 @@ namespace OpenWeatherMap
                     SqliteCommand command = connection.CreateCommand();
                     command.CommandText =
                     @"
-                        SELECT city_name,state,country
+                        SELECT location_id,city_name,state,country
                         FROM locations
                     ";
 
@@ -35,11 +35,12 @@ namespace OpenWeatherMap
                         {
                             while (reader.Read())
                             {
-                                string city_name = reader.GetString(0);
-                                string state = reader.GetString(1);
-                                string country = reader.GetString(2);
+                                string locationId = reader.GetString(0);
+                                string cityName = reader.GetString(1);
+                                string state = reader.GetString(2);
+                                string country = reader.GetString(3);
                               
-                                locationsList.Add(new SavedLocations(city_name, state, country));
+                                locationsList.Add(new SavedLocations(cityName, state, country, locationId));
                             }
                         }
                     }
