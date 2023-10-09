@@ -1,4 +1,5 @@
 # Open Weather Map Console Application with SQLite
+# Currently in Dev for working version see app without SQLite here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 
 ## For the version of the app without the SQLite database go here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)

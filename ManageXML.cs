@@ -61,6 +61,7 @@ namespace OpenWeatherMap
             }
         }
 
+        /*
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
@@ -159,5 +160,6 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
         }
+        */
     }
 }
