@@ -16,6 +16,9 @@
     <None Update="APIKEY.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="meteo.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SavedCurrentLocation.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

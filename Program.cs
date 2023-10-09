@@ -198,6 +198,8 @@ namespace OpenWeatherMap
                         break;
                 }
             }
+
+            System.Environment.Exit(0);
         }
 
         private static void ListAllSavedLocations()
