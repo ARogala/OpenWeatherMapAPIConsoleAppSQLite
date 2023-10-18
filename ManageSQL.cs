@@ -37,8 +37,8 @@ namespace OpenWeatherMap
                             {
                                 int locationId = reader.GetInt32(0);
                                 string cityName = reader.GetString(1);
-                                float? latitude = reader.GetFloat(2);
-                                float? longitude = reader.GetFloat(3);
+                                float? latitude = reader.IsDBNull(2) ? null : reader.GetFloat(2);
+                                float? longitude = reader.IsDBNull(3) ? null : reader.GetFloat(3);
                                 string country = reader.GetString(4);
                                 string state = reader.GetString(5);
                                 int isDefault = reader.GetInt32(6);
