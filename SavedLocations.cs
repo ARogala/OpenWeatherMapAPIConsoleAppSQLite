@@ -6,14 +6,18 @@ namespace OpenWeatherMap
         private string _city;
         private string _stateCode;
         private string _countryCode;
-        private string _locationId;
-        private string _isDefault;
+        private int? _locationId;
+        private int? _isDefault;
+        private float? _latitude;
+        private float? _longitude;
 
-        public SavedLocations(string city = "", string stateCode = "", string countryCode = "", string locationID = "", string isDefault = "")
+        public SavedLocations(string city = "", string stateCode = "", string countryCode = "", float? latitude = null, float? longitude = null, int? locationID = null, int? isDefault = null)
         {
             _city = city;
             _stateCode = stateCode;
             _countryCode = countryCode;
+            _latitude = latitude;
+            _longitude = longitude;
             _locationId = locationID;
             _isDefault = isDefault;
         }
@@ -35,16 +39,28 @@ namespace OpenWeatherMap
             set { _countryCode = value; }
         }
 
-        public string LocationId
+        public int? LocationId
         {
             get { return _locationId; }
             set { _locationId = value; }  
         }
 
-        public string IsDefalut
+        public int? IsDefalut
         {
             get { return _isDefault; }
             set { _isDefault = value; }
+        }
+
+        public float? Latitude
+        {
+            get { return _latitude; }
+            set { _latitude = value; }
+        }
+
+        public float? Longitude
+        {
+            get { return _longitude; }
+            set { _longitude = value; }
         }
     }
 }
