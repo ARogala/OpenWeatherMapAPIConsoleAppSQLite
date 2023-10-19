@@ -108,8 +108,8 @@ namespace OpenWeatherMap
                         ManageConsoleDisplay.DisplayHeader();
                         //ushort index1 = ChooseLocation();
                         //ManageXML.ChangeDefaultLocation(index1);
-                        int? newDefaultLocationId = ChooseLocationSQL();
-                        ManageSQL.ChangeDefaultLocation(newDefaultLocationId);
+                        int? newDefaultLocationId1 = ChooseLocationSQL();
+                        ManageSQL.ChangeDefaultLocation(newDefaultLocationId1);
                         //get weather for new default location
                         location = await ManageAPICalls.GetLocation(0, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
@@ -119,17 +119,32 @@ namespace OpenWeatherMap
                     case "Remove a saved location":
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
-                        ushort index2 = ChooseLocation();
+                        //ushort index2 = ChooseLocation();
                         //if last location removed -- immediately add new one
-                        if (ManageXML.RemoveLocation(index2))
+                        //if (ManageXML.RemoveLocation(index2))
+                        //{
+                            //AnsiConsole.Clear();
+                            //CheckForSavedLocations(ManageXML.GetSavedLocations());
+                        //}
+
+                        //get location ID to remove
+                        int? newDefaultLocationId2 = ChooseLocationSQL();
+                        //remove it
+                        ManageSQL.RemoveSavedLocation(newDefaultLocationId2);
+                        //check if last location was removed -- if true add new one
+                        int? rowCount = ManageSQL.GetLocationRowCount();
+                        if (rowCount == 0)
                         {
                             AnsiConsole.Clear();
-                            CheckForSavedLocations(ManageXML.GetSavedLocations());
+                            GetAndSaveDefaultLocation();
                         }
-                        //get locatioin to remove
-                        //remove it
-                        //check if last location was removed -- if true add new one
                         //check if default was removed -- if true get new default
+                        int? defaultRow = ManageSQL.HasDefaultLocation();
+                        if(defaultRow == 0)
+                        {
+                            AnsiConsole.Clear();
+                            GetAndSaveDefaultLocation();
+                        }
 
                         ManageConsoleDisplay.DisplayHeader();
                         choice = GetChoice();
@@ -358,9 +373,9 @@ namespace OpenWeatherMap
         private static void GetAndSaveDefaultLocation()
         {
             ManageConsoleDisplay.DisplayHeader();
-            AnsiConsole.WriteLine("No saved location found please enter one.");
+            AnsiConsole.WriteLine("No saved or default location found please enter one.");
             AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
-            AnsiConsole.WriteLine("Note: If you remove all locations you will be immediately asked to add one -- the app needs location to work.");
+            AnsiConsole.WriteLine("Note: If you removed all locations or removed your default location you will be immediately asked to add one -- the app needs location to work.");
             List<string> newLocation = GetNewLocationInput();
 
             //ManageXML.SaveLocation(newLocation[0], newLocation[1], newLocation[2]);

@@ -138,7 +138,7 @@ namespace OpenWeatherMap
             }
         }
 
-        public static void RemoveSavedLocation(SavedLocations removeLocation)
+        public static void RemoveSavedLocation(int? removeLocationId)
         {
             using (connection)
             {
@@ -148,12 +148,10 @@ namespace OpenWeatherMap
                     SqliteCommand command = connection.CreateCommand();
                     command.CommandText =
                     @"
-                        DELETE FROM locations WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
+                        DELETE FROM locations WHERE location_id = $removeLocationId;
                     ";
                     command.Parameters.AddRange(new[] {
-                        new SqliteParameter("$city", removeLocation.City),
-                        new SqliteParameter("$stateCode", removeLocation.StateCode),
-                        new SqliteParameter("$countryCode", removeLocation.CountryCode)  
+                        new SqliteParameter("$removeLocationId", removeLocationId)
                     });
 
                     command.ExecuteNonQuery();
@@ -164,6 +162,70 @@ namespace OpenWeatherMap
                     AnsiConsole.WriteException(e);
                 }
             }
+        }
+        //return null or row count
+        public static int? GetLocationRowCount()
+        {
+            int? rowCount = null;
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT COUNT(*) FROM locations;
+                    ";
+
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            rowCount = reader.GetInt32(0);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return rowCount;
+        }
+
+        public static int? HasDefaultLocation()
+        {
+            int? rowCount = null;
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT COUNT(*) FROM locations WHERE is_default = $isDefault;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$isDefault", 1)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            rowCount = reader.GetInt32(0);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return rowCount;
         }
     }
 }
