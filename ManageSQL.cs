@@ -99,7 +99,7 @@ namespace OpenWeatherMap
         //1 update old default location's is_default column to 0 
         //2 select choosen new default location and update its is_default column to 1
         //3 commit txn
-        public static void ChangeDefaultLocation(SavedLocations newDefaultLocation)
+        public static void ChangeDefaultLocation(int? newDefaultLocationId)
         {
             using (connection)
             {
@@ -121,12 +121,10 @@ namespace OpenWeatherMap
                         @"
                             UPDATE locations
                             SET is_default = 1
-                            WHERE city_name = $city AND state = $stateCode AND country = $countryCode;
+                            WHERE location_id = $newDefaultLocationId;
                         ";
                         command.Parameters.AddRange(new[] {
-                            new SqliteParameter("$city", newDefaultLocation.City),
-                            new SqliteParameter("$stateCode", newDefaultLocation.StateCode),
-                            new SqliteParameter("$countryCode", newDefaultLocation.CountryCode),
+                            new SqliteParameter("$newDefaultLocationId", newDefaultLocationId)
                         });
                         command.ExecuteNonQuery();
                         txn.Commit();

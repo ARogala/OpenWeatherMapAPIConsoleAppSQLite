@@ -108,8 +108,8 @@ namespace OpenWeatherMap
                         ManageConsoleDisplay.DisplayHeader();
                         //ushort index1 = ChooseLocation();
                         //ManageXML.ChangeDefaultLocation(index1);
-                        SavedLocations newDefaultLocation = ChooseLocationSQL();
-                        ManageSQL.ChangeDefaultLocation(newDefaultLocation);
+                        int? newDefaultLocationId = ChooseLocationSQL();
+                        ManageSQL.ChangeDefaultLocation(newDefaultLocationId);
                         //get weather for new default location
                         location = await ManageAPICalls.GetLocation(0, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
@@ -295,7 +295,7 @@ namespace OpenWeatherMap
             return choice;
         }
         
-        private static SavedLocations ChooseLocationSQL()
+        private static int? ChooseLocationSQL()
         {
             savedLocationsList = ManageSQL.GetSavedLocations();
             SelectionPrompt<string> prompt = new SelectionPrompt<string>()
@@ -305,20 +305,20 @@ namespace OpenWeatherMap
 
             foreach (SavedLocations location in savedLocationsList)
             {
-                prompt.AddChoice($"{location.City} -- {location.StateCode} -- {location.CountryCode}");
+                prompt.AddChoice($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}");
             }
 
             string choice = AnsiConsole.Prompt(prompt);
-            //get new default location
-            SavedLocations newDefaultLocation = null;
+            //get new default location id
+            int? newDefaultLocationId = null;
             foreach (SavedLocations location in savedLocationsList)
             {
-                if ($"{location.City} -- {location.StateCode} -- {location.CountryCode}" == choice)
+                if ($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}" == choice)
                 {
-                    newDefaultLocation = location;
+                    newDefaultLocationId = location.LocationId;
                 }
             }
-            return newDefaultLocation;
+            return newDefaultLocationId;
         }
         private static ushort ChooseLocation()
         {
