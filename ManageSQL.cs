@@ -63,7 +63,7 @@ namespace OpenWeatherMap
         }
 
         //isDefault 0 false 1 true
-        public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault)
+        public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault, float? latitude = null, float? longitude = null)
         {
             try
             {
@@ -78,8 +78,8 @@ namespace OpenWeatherMap
                     ";
                     command.Parameters.AddRange(new[] { 
                         new SqliteParameter("$city", city),
-                        new SqliteParameter("$latNull", DBNull.Value),
-                        new SqliteParameter("$lonNull", DBNull.Value),
+                        new SqliteParameter("$latNull", latitude == null ? DBNull.Value : latitude),
+                        new SqliteParameter("$lonNull", longitude == null ? DBNull.Value : longitude),
                         new SqliteParameter("$countryCode", countryCode),
                         new SqliteParameter("$stateCode", stateCode),
                         new SqliteParameter("$isDefault", isDefault)

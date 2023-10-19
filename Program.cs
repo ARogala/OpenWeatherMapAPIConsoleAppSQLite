@@ -204,7 +204,8 @@ namespace OpenWeatherMap
 
         private static void ListAllSavedLocations()
         {
-            savedLocationsList = ManageXML.GetSavedLocations();
+            //savedLocationsList = ManageXML.GetSavedLocations();
+            savedLocationsList = ManageSQL.GetSavedLocations();
             foreach (SavedLocations savedLocation in savedLocationsList)
             {
                 AnsiConsole.WriteLine($"{savedLocation.City} -- {savedLocation.StateCode} -- {savedLocation.CountryCode}");
