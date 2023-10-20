@@ -35,7 +35,7 @@ namespace OpenWeatherMap
                
             //load XML Docs
             ManageXML.LoadXML("APIKEY.xml");
-            ManageXML.LoadXML("SavedLocations.xml");
+            //ManageXML.LoadXML("SavedLocations.xml");
 
             //get api key from XML if empty set it
             apiKey = ManageXML.GetAPIKey();
@@ -160,7 +160,8 @@ namespace OpenWeatherMap
                     case "Get weather from a saved location":
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
-                        ushort index3 = ChooseLocation();
+                        //ushort index3 = ChooseLocation();
+                        ushort index3 = (ushort)ChooseLocationSQL();
                         location = await ManageAPICalls.GetLocation(index3, true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
@@ -183,7 +184,8 @@ namespace OpenWeatherMap
                     case "Get 5 day forecast from a saved location":
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
-                        ushort index4 = ChooseLocation();
+                        //ushort index4 = ChooseLocation();
+                        ushort index4 = (ushort)ChooseLocationSQL();
                         location = await ManageAPICalls.GetLocation(index4, false);
                         forecastWeather = await ManageAPICalls.GetForecast(location);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
@@ -335,6 +337,7 @@ namespace OpenWeatherMap
             }
             return newDefaultLocationId;
         }
+        /*
         private static ushort ChooseLocation()
         {
             savedLocationsList = ManageXML.GetSavedLocations();
@@ -361,6 +364,7 @@ namespace OpenWeatherMap
             }
             return index;
         }
+        */
 
         private static void CheckForSavedLocations(List<SavedLocations> savedLocationsList)
         {

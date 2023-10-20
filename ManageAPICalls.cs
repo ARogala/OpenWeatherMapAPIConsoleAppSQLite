@@ -75,7 +75,8 @@ namespace OpenWeatherMap
         {
             List<Location> location = new List<Location>();
             //location of element to change is the passed index
-            List<SavedLocations> savedLocationsList = ManageXML.GetSavedLocations();
+            //List<SavedLocations> savedLocationsList = ManageXML.GetSavedLocations();
+            List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
             SavedLocations locationForWeather = savedLocationsList[atIndex];
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

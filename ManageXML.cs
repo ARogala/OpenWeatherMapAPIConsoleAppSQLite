@@ -6,7 +6,7 @@ namespace OpenWeatherMap
     internal static class ManageXML
     {
         private static XDocument apiDoc;
-        private static XDocument locationsDoc;
+        //private static XDocument locationsDoc;
 
         public static void LoadXML(string docName)
         {
@@ -24,10 +24,10 @@ namespace OpenWeatherMap
             {
                 apiDoc = xmlDoc;
             }
-            else if (docName == "SavedLocations.xml")
-            {
-                locationsDoc = xmlDoc;
-            }
+            //else if (docName == "SavedLocations.xml")
+            //{
+                //locationsDoc = xmlDoc;
+            //}
             
         }
 
@@ -61,7 +61,7 @@ namespace OpenWeatherMap
             }
         }
 
-        
+        /*
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
@@ -160,6 +160,7 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
         }
+        */
         
     }
 }
