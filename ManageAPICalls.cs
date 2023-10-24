@@ -71,19 +71,42 @@ namespace OpenWeatherMap
 
         }
 
-        public static async Task<List<Location>> GetLocation(ushort atIndex, bool forCurrentWeather)
+        public static async Task<List<Location>> GetLocation(bool forCurrentWeather, bool defaultLocation, ushort? atLocationId = null)
         {
             List<Location> location = new List<Location>();
-            //location of element to change is the passed index
+            
             List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
-            //need to compaire based on index/id here --- ADJUST
-            SavedLocations locationForWeather = savedLocationsList[atIndex];
+            //default to id = 0 but need to get right loaction based on Id or defaultLocation bool value
+            SavedLocations locationForWeather = savedLocationsList[0];
+            if (defaultLocation)
+            {
+                foreach (SavedLocations savedLocation in savedLocationsList)
+                {
+                    if (savedLocation.IsDefalut == 1)
+                    {
+                        locationForWeather = savedLocation;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (SavedLocations savedLocation in savedLocationsList)
+                {
+                    if (savedLocation.LocationId == atLocationId)
+                    {
+                        locationForWeather = savedLocation;
+                        break;
+                    }
+                }
+            }
+            
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             try
             {
-                //location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                location = GetLatLongCoordsTest(forCurrentWeather);
+                location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
+                //location = GetLatLongCoordsTest(forCurrentWeather);
             }
             catch (Exception e)
             {
@@ -165,8 +188,8 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                //currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                currentWeather = GetCurrentWeatherTest();
+                currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                //currentWeather = GetCurrentWeatherTest();
             }
             catch (Exception e)
             {
