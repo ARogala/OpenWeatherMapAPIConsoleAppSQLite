@@ -126,13 +126,22 @@ namespace OpenWeatherMap
                         }
                         //check if default was removed -- if true get new default
                         int? defaultRow = ManageSQL.HasDefaultLocation();
-                        if(defaultRow == 0)
+                        if(defaultRow == 0 && rowCount == 0)
                         {
                             AnsiConsole.Clear();
                             GetAndSaveDefaultLocation();
                         }
+                        else if (defaultRow == 0 && rowCount != 0)
+                        {
+                            AnsiConsole.Clear();
+                            ManageConsoleDisplay.DisplayHeader();
+                            AnsiConsole.WriteLine("You removed you default location please pick another one");
+                            int? newDefaultLocationId3 = ChooseLocation();
+                            ManageSQL.ChangeDefaultLocation(newDefaultLocationId3);
+                            AnsiConsole.Clear();
+                            ManageConsoleDisplay.DisplayHeader();
+                        }
 
-                        ManageConsoleDisplay.DisplayHeader();
                         choice = GetChoice();
                         break;
                     case "Update weather":
