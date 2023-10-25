@@ -44,7 +44,7 @@ namespace OpenWeatherMap
                                 int isDefault = reader.GetInt32(6);
                                 
                               
-                                locationsList.Add(new SavedLocations(cityName, state, country, latitude, longitude, locationId, isDefault));
+                                locationsList.Add(new SavedLocations(cityName, state, country, locationId, isDefault, latitude, longitude));
                             }
                         }
                     }
