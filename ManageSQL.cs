@@ -94,7 +94,7 @@ namespace OpenWeatherMap
         //1 update old default location's is_default column to 0 
         //2 select choosen new default location and update its is_default column to 1
         //3 commit txn
-        public static void ChangeDefaultLocation(int? newDefaultLocationId)
+        public static void ChangeDefaultLocation(int newDefaultLocationId)
         {
             using (connection)
             {
@@ -134,7 +134,7 @@ namespace OpenWeatherMap
             }
         }
 
-        public static void RemoveSavedLocation(int? removeLocationId)
+        public static void RemoveSavedLocation(int removeLocationId)
         {
             using (connection)
             {
