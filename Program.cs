@@ -32,7 +32,9 @@ namespace OpenWeatherMap
                 //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 
             }
-               
+
+            ManageConsoleDisplay.DisplayHeader();
+
             //load XML Doc
             ManageXML.LoadXML("APIKEY.xml");
 
@@ -40,7 +42,6 @@ namespace OpenWeatherMap
             apiKey = ManageXML.GetAPIKey();
             if (apiKey == "")
             {
-                ManageConsoleDisplay.DisplayHeader();
                 AnsiConsole.WriteLine("No Open Weather Map API key detected you need to input one.");
                 string inputApiKey = AnsiConsole.Ask<string>("What's your [green]API Key[/]?");
                 if (inputApiKey != "")
@@ -48,8 +49,6 @@ namespace OpenWeatherMap
                     ManageXML.SetAPIKey(inputApiKey);
                     apiKey = inputApiKey;
                 }
-                //clear console so Header doesnt display twice
-                AnsiConsole.Clear();
             }
 
             CheckForSavedLocations(ManageSQL.GetSavedLocations());
@@ -59,14 +58,10 @@ namespace OpenWeatherMap
             {
                 if (AnsiConsole.Confirm("There is saved weather data. Type y to display saved data or n to get new weather."))
                 {
-                    AnsiConsole.Clear();
-                    ManageConsoleDisplay.DisplayHeader();
                     ManageConsoleDisplay.GetAndDisplaySavedWeather();
                 }
                 else
                 {
-                    AnsiConsole.Clear();
-                    ManageConsoleDisplay.DisplayHeader();
                     location = await ManageAPICalls.GetLocation(true,true);
                     currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                     ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
@@ -74,7 +69,6 @@ namespace OpenWeatherMap
             }
             else
             {
-                ManageConsoleDisplay.DisplayHeader();
                 location = await ManageAPICalls.GetLocation(true,true);
                 currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
@@ -92,18 +86,12 @@ namespace OpenWeatherMap
                 switch (choice)
                 {
                     case "Add a new location":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         List<string> newLocation = GetNewLocationInput();
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         //isDefault 0 false 1 true
                         ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2],0);
                         choice = GetChoice();
                         break;
                     case "Switch default location":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         locationId = ChooseLocation();
                         ManageSQL.ChangeDefaultLocation(locationId);
                         //get weather for new default location
@@ -113,8 +101,6 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Remove a saved location":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         //get location ID to remove
                         locationId = ChooseLocation();
                         //remove it
@@ -123,40 +109,30 @@ namespace OpenWeatherMap
                         int? rowCount = ManageSQL.GetLocationRowCount();
                         if (rowCount == 0)
                         {
-                            AnsiConsole.Clear();
                             GetAndSaveDefaultLocation();
                         }
                         //check if default was removed -- if true get new default
                         int? defaultRow = ManageSQL.HasDefaultLocation();
                         if(defaultRow == 0 && rowCount == 0)
                         {
-                            AnsiConsole.Clear();
                             GetAndSaveDefaultLocation();
                         }
                         else if (defaultRow == 0 && rowCount != 0)
                         {
-                            AnsiConsole.Clear();
-                            ManageConsoleDisplay.DisplayHeader();
                             AnsiConsole.WriteLine("You removed you default location please pick another one");
                             locationId = ChooseLocation();
                             ManageSQL.ChangeDefaultLocation(locationId);
-                            AnsiConsole.Clear();
-                            ManageConsoleDisplay.DisplayHeader();
                         }
 
                         choice = GetChoice();
                         break;
                     case "Update weather":
-                        AnsiConsole.Clear();   
-                        ManageConsoleDisplay.DisplayHeader();
                         location = await ManageAPICalls.GetLocation(true,true);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
                     case "Get weather from a saved location":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         locationId = ChooseLocation();
                         location = await ManageAPICalls.GetLocation(true,false,(ushort)locationId);
                         currentWeather = await ManageAPICalls.GetCurrentWeather(location);
@@ -164,22 +140,16 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Display saved weather":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         ManageConsoleDisplay.GetAndDisplaySavedWeather();
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         location = await ManageAPICalls.GetLocation(false,true);
                         forecastWeather = await ManageAPICalls.GetForecast(location);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast from a saved location":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         locationId = ChooseLocation();
                         location = await ManageAPICalls.GetLocation(false,false,(ushort)locationId);
                         forecastWeather = await ManageAPICalls.GetForecast(location);
@@ -187,8 +157,6 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Display saved forecast":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         if (ManageSavedWeatherText.GetForecastText() != "")
                         {
                             ManageConsoleDisplay.GetAndDisplaySavedForecast();
@@ -200,9 +168,11 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "List all saved locations":
-                        AnsiConsole.Clear();
-                        ManageConsoleDisplay.DisplayHeader();
                         ListAllSavedLocations();
+                        choice = GetChoice();
+                        break;
+                    case "Clear Console":
+                        ClearConsole();
                         choice = GetChoice();
                         break;
                     case "Quit":
@@ -299,7 +269,7 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast",
+                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast",
                         "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
                         "Switch default location", "Remove a saved location","List all saved locations","Quit"
                     }));
@@ -342,7 +312,6 @@ namespace OpenWeatherMap
 
         private static void GetAndSaveDefaultLocation()
         {
-            ManageConsoleDisplay.DisplayHeader();
             AnsiConsole.WriteLine("No saved or default location found please enter one.");
             AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
             AnsiConsole.WriteLine("Note: If you removed all locations or removed your default location you will be immediately asked to add one -- the app needs location to work.");
@@ -350,8 +319,12 @@ namespace OpenWeatherMap
 
             //isDefault 0 false 1 true
             ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2], 1);
-            
+        }
+
+        private static void ClearConsole()
+        {
             AnsiConsole.Clear();
+            ManageConsoleDisplay.DisplayHeader();
         }
        
     }

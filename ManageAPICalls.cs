@@ -105,8 +105,8 @@ namespace OpenWeatherMap
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             try
             {
-                location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                //location = GetLatLongCoordsTest(forCurrentWeather);
+                //location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
+                location = GetLatLongCoordsTest(forCurrentWeather);
             }
             catch (Exception e)
             {
@@ -188,8 +188,8 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                //currentWeather = GetCurrentWeatherTest();
+                //currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                currentWeather = GetCurrentWeatherTest();
             }
             catch (Exception e)
             {
