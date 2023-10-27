@@ -16,9 +16,10 @@ namespace OpenWeatherMap
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
-            try
+            
+            using (connection)
             {
-                using (connection)
+                try
                 {
                     connection.Open();
 
@@ -29,36 +30,29 @@ namespace OpenWeatherMap
                         FROM locations
                     ";
 
-                    try
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
-                        using (SqliteDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                int locationId = reader.GetInt32(0);
-                                string cityName = reader.GetString(1);
-                                float? latitude = reader.IsDBNull(2) ? null : reader.GetFloat(2);
-                                float? longitude = reader.IsDBNull(3) ? null : reader.GetFloat(3);
-                                string country = reader.GetString(4);
-                                string state = reader.GetString(5);
-                                int isDefault = reader.GetInt32(6);
+                            int locationId = reader.GetInt32(0);
+                            string cityName = reader.GetString(1);
+                            float? latitude = reader.IsDBNull(2) ? null : reader.GetFloat(2);
+                            float? longitude = reader.IsDBNull(3) ? null : reader.GetFloat(3);
+                            string country = reader.GetString(4);
+                            string state = reader.GetString(5);
+                            int isDefault = reader.GetInt32(6);
                                 
-                              
-                                locationsList.Add(new SavedLocations(cityName, state, country, locationId, isDefault, latitude, longitude));
-                            }
+                            locationsList.Add(new SavedLocations(cityName, state, country, locationId, isDefault, latitude, longitude));
                         }
                     }
-                    catch (Exception e)
-                    {
-                        AnsiConsole.WriteException(e);
-                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get locations");
+                    AnsiConsole.WriteException(e);
                 }
             }
-            catch(Exception e)
-            {
-                AnsiConsole.WriteLine("Failed to get location from sqlite");
-                AnsiConsole.WriteException(e);
-            }
+           
             return locationsList;
         }
 
