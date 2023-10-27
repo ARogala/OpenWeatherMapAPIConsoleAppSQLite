@@ -217,9 +217,9 @@ namespace OpenWeatherMap
         private static void ListAllSavedLocations()
         {
             savedLocationsList = ManageSQL.GetSavedLocations();
-            foreach (SavedLocations savedLocation in savedLocationsList)
+            foreach (SavedLocations  location in savedLocationsList)
             {
-                AnsiConsole.WriteLine($"{savedLocation.City} -- {savedLocation.StateCode} -- {savedLocation.CountryCode}");
+                AnsiConsole.WriteLine($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}");
             }
             AnsiConsole.WriteLine("");
         }
