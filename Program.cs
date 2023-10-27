@@ -95,9 +95,10 @@ namespace OpenWeatherMap
                         AnsiConsole.Clear();
                         ManageConsoleDisplay.DisplayHeader();
                         List<string> newLocation = GetNewLocationInput();
+                        AnsiConsole.Clear();
+                        ManageConsoleDisplay.DisplayHeader();
                         //isDefault 0 false 1 true
                         ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2],0);
-                        AnsiConsole.Clear();
                         choice = GetChoice();
                         break;
                     case "Switch default location":

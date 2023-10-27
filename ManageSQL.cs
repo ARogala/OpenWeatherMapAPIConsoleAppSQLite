@@ -59,9 +59,10 @@ namespace OpenWeatherMap
         //isDefault 0 false 1 true
         public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault, float? latitude = null, float? longitude = null)
         {
-            try
+           
+            using (connection)
             {
-                using (connection)
+                try
                 {
                     connection.Open();
 
@@ -81,11 +82,11 @@ namespace OpenWeatherMap
 
                     command.ExecuteNonQuery();
                 }
-            }
-            catch (Exception e)
-            {
-                AnsiConsole.WriteLine("Failed to set location from sqlite");
-                AnsiConsole.WriteException(e);
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to set location from sqlite");
+                    AnsiConsole.WriteException(e);
+                }
             }
         }
 
