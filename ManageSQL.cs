@@ -84,7 +84,7 @@ namespace OpenWeatherMap
                 }
                 catch (Exception e)
                 {
-                    AnsiConsole.WriteLine("Failed to set location from sqlite");
+                    AnsiConsole.WriteLine("Failed to set location to sqlite");
                     AnsiConsole.WriteException(e);
                 }
             }
@@ -127,6 +127,7 @@ namespace OpenWeatherMap
                     catch (Exception e)
                     {
                         txn.Rollback();
+                        AnsiConsole.WriteLine("Failed to change default location");
                         AnsiConsole.WriteException(e);
                     }
                 }
@@ -184,6 +185,7 @@ namespace OpenWeatherMap
                 }
                 catch (Exception e)
                 {
+                    AnsiConsole.WriteLine("Failed to get location row count");
                     AnsiConsole.WriteException(e);
                 }
             }
@@ -217,6 +219,7 @@ namespace OpenWeatherMap
                 }
                 catch (Exception e)
                 {
+                    AnsiConsole.WriteLine("Failed to check for default location");
                     AnsiConsole.WriteException(e);
                 }
             }
