@@ -71,7 +71,7 @@ namespace OpenWeatherMap
 
         }
 
-        public static async Task<List<Location>> GetLocation(bool forCurrentWeather, bool defaultLocation, ushort? atLocationId = null)
+        public static async Task<List<Location>> GetLocation(bool forCurrentWeather, bool defaultLocation, int? atLocationId = null)
         {
             List<Location> location = new List<Location>();
             

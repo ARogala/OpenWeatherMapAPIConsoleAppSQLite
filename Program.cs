@@ -127,7 +127,7 @@ namespace OpenWeatherMap
                         break;
                     case "Get weather from a saved location":
                         locationId = ChooseLocation();
-                        await GetCurrentWeatherOrForecast(true, false, (ushort)locationId);
+                        await GetCurrentWeatherOrForecast(true, false, locationId);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
@@ -142,7 +142,7 @@ namespace OpenWeatherMap
                         break;
                     case "Get 5 day forecast from a saved location":
                         locationId = ChooseLocation();
-                        await GetCurrentWeatherOrForecast(false, false, (ushort)locationId);
+                        await GetCurrentWeatherOrForecast(false, false, locationId);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = GetChoice();
                         break;
@@ -317,7 +317,7 @@ namespace OpenWeatherMap
             ManageConsoleDisplay.DisplayHeader();
         }
         
-        private static async Task GetCurrentWeatherOrForecast(bool forCurrentWeather, bool defaultLocation, ushort? atLocationId = null)
+        private static async Task GetCurrentWeatherOrForecast(bool forCurrentWeather, bool defaultLocation, int? atLocationId = null)
         {
             location = await ManageAPICalls.GetLocation(forCurrentWeather, defaultLocation, atLocationId);
             if (forCurrentWeather)
