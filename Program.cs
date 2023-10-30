@@ -62,15 +62,13 @@ namespace OpenWeatherMap
                 }
                 else
                 {
-                    location = await ManageAPICalls.GetLocation(true,true);
-                    currentWeather = await ManageAPICalls.GetCurrentWeather(location);
+                    await GetCurrentWeatherOrForecast(true,true);
                     ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                 }
             }
             else
             {
-                location = await ManageAPICalls.GetLocation(true,true);
-                currentWeather = await ManageAPICalls.GetCurrentWeather(location);
+                await GetCurrentWeatherOrForecast(true, true);
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             
@@ -94,10 +92,6 @@ namespace OpenWeatherMap
                     case "Switch default location":
                         locationId = ChooseLocation();
                         ManageSQL.ChangeDefaultLocation(locationId);
-                        //get weather for new default location
-                        location = await ManageAPICalls.GetLocation(true,true);
-                        currentWeather = await ManageAPICalls.GetCurrentWeather(location);
-                        ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
                     case "Remove a saved location":
@@ -127,15 +121,13 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Update weather":
-                        location = await ManageAPICalls.GetLocation(true,true);
-                        currentWeather = await ManageAPICalls.GetCurrentWeather(location);
+                        await GetCurrentWeatherOrForecast(true, true);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
                     case "Get weather from a saved location":
                         locationId = ChooseLocation();
-                        location = await ManageAPICalls.GetLocation(true,false,(ushort)locationId);
-                        currentWeather = await ManageAPICalls.GetCurrentWeather(location);
+                        await GetCurrentWeatherOrForecast(true, false, (ushort)locationId);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = GetChoice();
                         break;
@@ -144,15 +136,13 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
-                        location = await ManageAPICalls.GetLocation(false,true);
-                        forecastWeather = await ManageAPICalls.GetForecast(location);
+                        await GetCurrentWeatherOrForecast(false, true);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast from a saved location":
                         locationId = ChooseLocation();
-                        location = await ManageAPICalls.GetLocation(false,false,(ushort)locationId);
-                        forecastWeather = await ManageAPICalls.GetForecast(location);
+                        await GetCurrentWeatherOrForecast(false, false, (ushort)locationId);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = GetChoice();
                         break;
@@ -326,6 +316,18 @@ namespace OpenWeatherMap
             AnsiConsole.Clear();
             ManageConsoleDisplay.DisplayHeader();
         }
-       
+        
+        private static async Task GetCurrentWeatherOrForecast(bool forCurrentWeather, bool defaultLocation, ushort? atLocationId = null)
+        {
+            location = await ManageAPICalls.GetLocation(forCurrentWeather, defaultLocation, atLocationId);
+            if (forCurrentWeather)
+            {
+                currentWeather = await ManageAPICalls.GetCurrentWeather(location);
+            }
+            else
+            {
+                forecastWeather = await ManageAPICalls.GetForecast(location);
+            }
+        }
     }
 }
