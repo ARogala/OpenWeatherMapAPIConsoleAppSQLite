@@ -5,8 +5,8 @@ namespace OpenWeatherMap
 {
     internal record class Location(
         [property: JsonPropertyName("name")] string Name,
-        [property: JsonPropertyName("lat")] double Latitude,
-        [property: JsonPropertyName("lon")] double Longitude,
+        [property: JsonPropertyName("lat")] float Latitude,
+        [property: JsonPropertyName("lon")] float Longitude,
         [property: JsonPropertyName("country")] string Country,
         [property: JsonPropertyName("state")] string State);
 }
