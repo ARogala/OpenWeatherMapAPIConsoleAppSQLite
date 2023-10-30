@@ -42,7 +42,7 @@ namespace OpenWeatherMap
                 
                 location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
             }
-
+          
             return location;
         }
 
@@ -100,18 +100,45 @@ namespace OpenWeatherMap
                     }
                 }
             }
-            
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            try
+            //to prevent additional api calls
+            //if DB value locationForWeather has lat lon add locationForWeather to location list and save location text -- app state
+            //else get lat lon from api and save lat lon to DB
+            if (locationForWeather.Latitude != null && locationForWeather.Longitude != null)
             {
-                //location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                location = GetLatLongCoordsTest(forCurrentWeather);
+                location.Add(new Location(locationForWeather.City, 
+                    (float)locationForWeather.Latitude, 
+                    (float)locationForWeather.Longitude, 
+                    locationForWeather.CountryCode,
+                    locationForWeather.StateCode)
+                );
+                string json = JsonSerializer.Serialize(location);
+                //save to text for forecast and current weather
+                if (forCurrentWeather)
+                {
+                    ManageSavedWeatherText.SaveCurrentLocationText(json);
+                }
+                else
+                {
+                    ManageSavedWeatherText.SaveForecastLocationText(json);
+                }
             }
-            catch (Exception e)
+            else
             {
-                AnsiConsole.WriteException(e);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                try
+                {
+                    location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
+                    //location = GetLatLongCoordsTest(forCurrentWeather);
+                    //add lat lon to SQL DB
+                    ManageSQL.AddLatLonToLocation(location[0].Latitude, location[0].Longitude, locationForWeather.LocationId);
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteException(e);
+                }
             }
+      
             return location;
         }
 
@@ -188,8 +215,8 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                //currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                currentWeather = GetCurrentWeatherTest();
+                currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                //currentWeather = GetCurrentWeatherTest();
             }
             catch (Exception e)
             {
@@ -222,8 +249,8 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                //forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                forecastWeather = GetForecastTest();
+                forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                //forecastWeather = GetForecastTest();
             }
             catch(Exception e)
             {

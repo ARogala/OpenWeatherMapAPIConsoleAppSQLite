@@ -90,6 +90,34 @@ namespace OpenWeatherMap
             }
         }
 
+        public static void AddLatLonToLocation(float latitude, float longitude, int locationId)
+        {
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        UPDATE locations SET latitude = $lat, longitude = $lon WHERE location_id = $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$lat", latitude),
+                        new SqliteParameter("$lon", longitude),
+                        new SqliteParameter("$locationId", locationId)
+                    });
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to update lat lon in locations table");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+        }
         //Set up as a Transaction -- it all happens or nothing happens
         //1 update old default location's is_default column to 0 
         //2 select choosen new default location and update its is_default column to 1
