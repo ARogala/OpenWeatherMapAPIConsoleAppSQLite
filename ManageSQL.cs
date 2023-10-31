@@ -118,6 +118,97 @@ namespace OpenWeatherMap
                 }
             }
         }
+
+        public static void SaveCurrentWeather(CurrentWeather currentWeather, int locationId) 
+        {
+            string weatherDescription = string.Empty;
+            List<WeatherRecord> wther = currentWeather.Weather;
+            foreach (WeatherRecord weather in wther)
+            {
+                weatherDescription = weatherDescription + " " + weather.description;
+            }
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        INSERT INTO weather(
+                        location_id, 
+                        latitude, 
+                        longitude, 
+                        city_name,
+                        weather_description,
+                        temperature_fahrenheit,
+                        pressure_sea_level_hPa,
+                        humidity,
+                        visibility_miles,
+                        wind_speed_miles_hr,
+                        wind_direction_degrees,
+                        wind_direction_cardinal,
+                        wind_gust_miles_hr,
+                        cloudiness_percent,
+                        rain_volume_last_1hr_inch,
+                        rain_volume_last_3hr_inch,
+                        snow_volume_last_1hr_inch,
+                        snow_volume_last_3hr_inch,
+                        time_weather_data_calculated_unix_utc) 
+                        VALUES(
+                        $locationId, 
+                        $lat, 
+                        $lon, 
+                        $city, 
+                        $weatherDescription, 
+                        $tempF,
+                        $pressure,
+                        $humidity,
+                        $visibilityMiles,
+                        $windSpeedMH,
+                        $windDirDeg,
+                        $windDirCard,
+                        $windGustMH,
+                        $cloudCover,
+                        $rain1hr,
+                        $rain3hr,
+                        $snow1hr,
+                        $snow3hr,
+                        $timeWthCalcUNIXUTC);
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$locationId", locationId),
+                        new SqliteParameter("$lat", currentWeather.Coord.lat),
+                        new SqliteParameter("$lon", currentWeather.Coord.lon),
+                        new SqliteParameter("$city", currentWeather.Name),
+                        //description is in an array
+                        new SqliteParameter("$weatherDescription", weatherDescription),
+                        new SqliteParameter("$tempF", currentWeather.Main.temp),
+                        new SqliteParameter("$pressure", currentWeather.Main.pressure),
+                        new SqliteParameter("$humidity", currentWeather.Main.humidity),
+                        new SqliteParameter("$visibilityMiles", UnitConversions.MetersToMiles(currentWeather.Visibility)),
+                        new SqliteParameter("$windSpeedMH", currentWeather.Wind.speed),
+                        new SqliteParameter("$windDirDeg", currentWeather.Wind.deg),
+                        new SqliteParameter("$windDirCard", UnitConversions.WindDegToDir(currentWeather.Wind.deg)),
+                        new SqliteParameter("$windGustMH", currentWeather.Wind.gust),
+                        new SqliteParameter("$cloudCover", currentWeather.Clouds.all),
+                        new SqliteParameter("$rain1hr", currentWeather.Rain == null ? DBNull.Value : UnitConversions.mmToInch(currentWeather.Rain.hr1)),
+                        new SqliteParameter("$rain3hr", currentWeather.Rain == null ? DBNull.Value : UnitConversions.mmToInch(currentWeather.Rain.hr3)),
+                        new SqliteParameter("$snow1hr", currentWeather.Snow == null ? DBNull.Value : UnitConversions.mmToInch(currentWeather.Snow.hr1)),
+                        new SqliteParameter("$snow3hr", currentWeather.Snow == null ? DBNull.Value : UnitConversions.mmToInch(currentWeather.Snow.hr3)),
+                        new SqliteParameter("$timeWthCalcUNIXUTC", currentWeather.UnixTimeStamp)
+                    });
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to save current weather to DB");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+        }
         //Set up as a Transaction -- it all happens or nothing happens
         //1 update old default location's is_default column to 0 
         //2 select choosen new default location and update its is_default column to 1

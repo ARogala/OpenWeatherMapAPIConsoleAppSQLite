@@ -10,6 +10,8 @@ namespace OpenWeatherMap
         private static string apiKey = ManageXML.GetAPIKey();
 
         private static readonly HttpClient client = new HttpClient();
+
+        private static int currentLocationId;
         private static async Task<List<Location>> GetLatLongCoordsAsync(HttpClient client, SavedLocations locationForWeather, bool forCurrentWeather)
         {
             string json;
@@ -100,6 +102,8 @@ namespace OpenWeatherMap
                     }
                 }
             }
+            //save current location id -- used to save current weather in GetCurrentWeather method
+            currentLocationId = locationForWeather.LocationId;
             //to prevent additional api calls
             //if DB value locationForWeather has lat lon add locationForWeather to location list and save location text -- app state
             //else get lat lon from api and save lat lon to DB
@@ -217,6 +221,8 @@ namespace OpenWeatherMap
                 //limit of 1 on api call so this location List will always have length of 1
                 currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
                 //currentWeather = GetCurrentWeatherTest();
+                //save currentWeather to DB
+                ManageSQL.SaveCurrentWeather(currentWeather, currentLocationId);
             }
             catch (Exception e)
             {
