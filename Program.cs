@@ -132,7 +132,14 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Display saved weather":
-                        ManageConsoleDisplay.GetAndDisplaySavedWeather();
+                        if (ManageSavedWeatherText.GetCurrentWeatherText() != "")
+                        {
+                            ManageConsoleDisplay.GetAndDisplaySavedWeather();
+                        }
+                        else
+                        {
+                            AnsiConsole.MarkupLine("[bold red]There is no saved weather data.[/]");
+                        }
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
