@@ -1,9 +1,12 @@
 # Open Weather Map Console Application with SQLite
-## Currently in Dev -- but works
 
 ## For the version of the app without the SQLite database go here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)
 ## Uses [Spectre Console](https://github.com/spectreconsole/spectre.console) for the display
+
+## App screen shot
+
+![App screen shot](AppScreenShot.png "App screen shot")
 
 ## Directions for use
 
