@@ -16,6 +16,7 @@
 3. Build or publish the app in Visual Studio
 4. Run the exe and enjoy -- it will ask for your api key and default location
 5. Or for Ubuntu run this command in terminal --> dotnet publish -c release -r ubuntu.22.04-x64 --self-contained
+6. Running on Windows 11 -- go to System -> For Developers -> Terminal and set to Windows Console Host (this allows the app to resize the console to the correct width and height)
 
 ## About
 This is a simple app that displays current weather and 5 day 3hr forecast from Open Weather API
