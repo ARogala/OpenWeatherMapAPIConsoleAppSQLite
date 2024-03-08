@@ -1,18 +1,19 @@
 ﻿using Spectre.Console;
 using System.Xml.Linq;
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Managers
 {
     internal static class ManageXML
     {
         private static XDocument apiDoc;
-
+        private static string appDirectory = Directory.GetCurrentDirectory();
+        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
         public static void LoadXML(string docName)
         {
             XDocument xmlDoc = new XDocument();
             try
             {
-                xmlDoc = XDocument.Load(docName);
+                xmlDoc = XDocument.Load(GetPath(docName));
             }
             catch (Exception e)
             {
@@ -23,7 +24,7 @@ namespace OpenWeatherMap
             {
                 apiDoc = xmlDoc;
             }
-            
+
         }
 
         public static string GetAPIKey()
@@ -55,6 +56,11 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
         }
-        
+
+        private static string GetPath(string fileName)
+        {
+            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
+        }
+
     }
 }

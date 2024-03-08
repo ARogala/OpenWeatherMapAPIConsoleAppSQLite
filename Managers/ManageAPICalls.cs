@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Managers
 {
     internal static class ManageAPICalls
     {
@@ -27,7 +27,7 @@ namespace OpenWeatherMap
                 {
                     ManageSavedWeatherText.SaveForecastLocationText(json);
                 }
-                
+
                 location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
             }
             else
@@ -41,10 +41,10 @@ namespace OpenWeatherMap
                 {
                     ManageSavedWeatherText.SaveForecastLocationText(json);
                 }
-                
+
                 location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
             }
-          
+
             return location;
         }
 
@@ -67,7 +67,7 @@ namespace OpenWeatherMap
             {
                 ManageSavedWeatherText.SaveForecastLocationText(json);
             }
-            
+
             List<Location> location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
             return location;
 
@@ -76,7 +76,7 @@ namespace OpenWeatherMap
         public static async Task<List<Location>> GetLocation(bool forCurrentWeather, bool defaultLocation, int? atLocationId = null)
         {
             List<Location> location = new List<Location>();
-            
+
             List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
             //default to id = 0 but need to get right loaction based on Id or defaultLocation bool value
             SavedLocations locationForWeather = savedLocationsList[0];
@@ -109,9 +109,9 @@ namespace OpenWeatherMap
             //else get lat lon from api and save lat lon to DB
             if (locationForWeather.Latitude != null && locationForWeather.Longitude != null)
             {
-                location.Add(new Location(locationForWeather.City, 
-                    (float)locationForWeather.Latitude, 
-                    (float)locationForWeather.Longitude, 
+                location.Add(new Location(locationForWeather.City,
+                    (float)locationForWeather.Latitude,
+                    (float)locationForWeather.Longitude,
                     locationForWeather.CountryCode,
                     locationForWeather.StateCode)
                 );
@@ -132,8 +132,8 @@ namespace OpenWeatherMap
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 try
                 {
-                    location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                    //location = GetLatLongCoordsTest(forCurrentWeather);
+                    //location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
+                    location = GetLatLongCoordsTest(forCurrentWeather);
                     //add lat lon to SQL DB
                     ManageSQL.AddLatLonToLocation(location[0].Latitude, location[0].Longitude, locationForWeather.LocationId);
                 }
@@ -142,7 +142,7 @@ namespace OpenWeatherMap
                     AnsiConsole.WriteException(e);
                 }
             }
-      
+
             return location;
         }
 
@@ -219,8 +219,8 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                //currentWeather = GetCurrentWeatherTest();
+                //currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                currentWeather = GetCurrentWeatherTest();
                 //save currentWeather to DB
                 ManageSQL.SaveCurrentWeather(currentWeather, currentLocationId);
             }
@@ -230,7 +230,7 @@ namespace OpenWeatherMap
             }
             return currentWeather;
         }
-       
+
         private static async Task<ForecastWeather> GetForecastAsync(HttpClient client, string lat, string lon)
         {
             string json = await client.GetStringAsync($"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={apiKey}");
@@ -246,7 +246,7 @@ namespace OpenWeatherMap
             ForecastWeather? forecastWeather = JsonSerializer.Deserialize<ForecastWeather>(json);
             return forecastWeather;
         }
-        
+
         public static async Task<ForecastWeather> GetForecast(List<Location> location)
         {
             ForecastWeather forecastWeather = null;
@@ -255,15 +255,15 @@ namespace OpenWeatherMap
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                //forecastWeather = GetForecastTest();
+                //forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                forecastWeather = GetForecastTest();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 AnsiConsole.WriteException(e);
             }
             return forecastWeather;
         }
-       
+
     }
 }

@@ -13,25 +13,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="APIKEY.xml">
+    <None Update="Data\APIKEY.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="meteo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SavedCurrentLocation.txt">
+    <None Update="Data\SavedCurrentLocation.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SavedCurrentWeather.txt">
+    <None Update="Data\SavedCurrentWeather.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SavedForecast.txt">
+    <None Update="Data\SavedForecast.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SavedForecastLocation.txt">
+    <None Update="Data\SavedForecastLocation.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Weather.db">
+    <None Update="Data\Weather.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="WindDirection.pdf">

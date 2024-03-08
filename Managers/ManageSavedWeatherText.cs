@@ -1,14 +1,16 @@
 ﻿using Spectre.Console;
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Managers
 {
     internal static class ManageSavedWeatherText
     {
+        private static string appDirectory = Directory.GetCurrentDirectory();
+        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
         public static void SaveCurrentWeatherText(string currentWeather)
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter("SavedCurrentWeather.txt", false))
+                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedCurrentWeather.txt")}", false))
                 {
                     sw.Write(currentWeather);
                 }
@@ -17,7 +19,7 @@ namespace OpenWeatherMap
             {
                 AnsiConsole.WriteException(e);
             }
-            
+
         }
 
         public static string GetCurrentWeatherText()
@@ -25,7 +27,7 @@ namespace OpenWeatherMap
             string weatherText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader("SavedCurrentWeather.txt"))
+                using (StreamReader sr = new StreamReader($"{GetPath("SavedCurrentWeather.txt")}"))
                 {
                     weatherText = sr.ReadToEnd();
                     return weatherText;
@@ -36,14 +38,14 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
             return weatherText;
-           
+
         }
 
         public static void SaveCurrentLocationText(string currentLocation)
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter("SavedCurrentLocation.txt", false))
+                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedCurrentLocation.txt")}", false))
                 {
                     sw.Write(currentLocation);
                 }
@@ -52,7 +54,7 @@ namespace OpenWeatherMap
             {
                 AnsiConsole.WriteException(e);
             }
-            
+
         }
 
         public static string GetCurrentLocationText()
@@ -60,7 +62,7 @@ namespace OpenWeatherMap
             string locationText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader("SavedCurrentLocation.txt"))
+                using (StreamReader sr = new StreamReader($"{GetPath("SavedCurrentLocation.txt")}"))
                 {
                     locationText = sr.ReadToEnd();
                     return locationText;
@@ -71,14 +73,14 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
             return locationText;
-            
+
         }
 
         public static void SaveForecastLocationText(string forecastLocation)
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter("SavedForecastLocation.txt", false))
+                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedForecastLocation.txt")}", false))
                 {
                     sw.Write(forecastLocation);
                 }
@@ -93,7 +95,7 @@ namespace OpenWeatherMap
             string locationText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader("SavedForecastLocation.txt"))
+                using (StreamReader sr = new StreamReader($"{GetPath("SavedForecastLocation.txt")}"))
                 {
                     locationText = sr.ReadToEnd();
                     return locationText;
@@ -109,7 +111,7 @@ namespace OpenWeatherMap
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter("SavedForecast.txt", false))
+                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedForecast.txt")}", false))
                 {
                     sw.Write(forecast);
                 }
@@ -122,9 +124,9 @@ namespace OpenWeatherMap
         public static string GetForecastText()
         {
             string forecastText = string.Empty;
-            try 
+            try
             {
-                using (StreamReader sr = new StreamReader("SavedForecast.txt"))
+                using (StreamReader sr = new StreamReader($"{GetPath("SavedForecast.txt")}"))
                 {
                     forecastText = sr.ReadToEnd();
                     return forecastText;
@@ -135,6 +137,11 @@ namespace OpenWeatherMap
                 AnsiConsole.WriteException(e);
             }
             return forecastText;
+        }
+
+        private static string GetPath(string fileName)
+        {
+            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
         }
     }
 }

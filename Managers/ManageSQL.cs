@@ -7,16 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Managers
 {
     internal static class ManageSQL
     {
-        private static string connectionString = "Data Source=Weather.db";
+        private static string appDirectory = Directory.GetCurrentDirectory();
+        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
+
+        private static string connectionString = $"Data Source={GetPath("Weather.db")}";
         private static SqliteConnection connection = new SqliteConnection(connectionString);
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
-            
+
             using (connection)
             {
                 try
@@ -41,7 +44,7 @@ namespace OpenWeatherMap
                             string country = reader.GetString(4);
                             string state = reader.GetString(5);
                             int isDefault = reader.GetInt32(6);
-                                
+
                             locationsList.Add(new SavedLocations(cityName, state, country, locationId, isDefault, latitude, longitude));
                         }
                     }
@@ -52,14 +55,14 @@ namespace OpenWeatherMap
                     AnsiConsole.WriteException(e);
                 }
             }
-           
+
             return locationsList;
         }
 
         //isDefault 0 false 1 true
         public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault, float? latitude = null, float? longitude = null)
         {
-           
+
             using (connection)
             {
                 try
@@ -71,7 +74,7 @@ namespace OpenWeatherMap
                     @"
                         INSERT INTO locations(city_name, latitude, longitude, country, state, is_default) VALUES($city, $latNull, $lonNull, $countryCode, $stateCode, $isDefault);
                     ";
-                    command.Parameters.AddRange(new[] { 
+                    command.Parameters.AddRange(new[] {
                         new SqliteParameter("$city", city),
                         new SqliteParameter("$latNull", latitude == null ? DBNull.Value : latitude),
                         new SqliteParameter("$lonNull", longitude == null ? DBNull.Value : longitude),
@@ -119,7 +122,7 @@ namespace OpenWeatherMap
             }
         }
 
-        public static void SaveCurrentWeather(CurrentWeather currentWeather, int locationId) 
+        public static void SaveCurrentWeather(CurrentWeather currentWeather, int locationId)
         {
             string weatherDescription = string.Empty;
             List<WeatherRecord> wther = currentWeather.Weather;
@@ -271,7 +274,7 @@ namespace OpenWeatherMap
 
                     command.ExecuteNonQuery();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     AnsiConsole.WriteLine("Failed to remove a saved location");
                     AnsiConsole.WriteException(e);
@@ -343,6 +346,10 @@ namespace OpenWeatherMap
                 }
             }
             return rowCount;
+        }
+        private static string GetPath(string fileName)
+        {
+            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
         }
     }
 }
