@@ -133,8 +133,8 @@ namespace OpenWeatherMap.Managers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 try
                 {
-                    //location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                    location = GetLatLongCoordsTest(forCurrentWeather);
+                    location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
+                    //location = GetLatLongCoordsTest(forCurrentWeather);
                     //add lat lon to SQL DB
                     ManageSQL.AddLatLonToLocation(location[0].Latitude, location[0].Longitude, locationForWeather.LocationId);
                 }
@@ -220,8 +220,8 @@ namespace OpenWeatherMap.Managers
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                //currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                currentWeather = GetCurrentWeatherTest();
+                currentWeather = await GetCurrentWeatherAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                //currentWeather = GetCurrentWeatherTest();
                 //save currentWeather to DB
                 ManageSQL.SaveCurrentWeather(currentWeather, currentLocationId);
             }
@@ -256,8 +256,8 @@ namespace OpenWeatherMap.Managers
             try
             {
                 //limit of 1 on api call so this location List will always have length of 1
-                //forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
-                forecastWeather = GetForecastTest();
+                forecastWeather = await GetForecastAsync(client, location[0].Latitude.ToString(), location[0].Longitude.ToString());
+                //forecastWeather = GetForecastTest();
             }
             catch (Exception e)
             {
