@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using OpenWeatherMap.Managers;
+using OpenWeatherMap.Models;
 using Spectre.Console;
 
 namespace OpenWeatherMap

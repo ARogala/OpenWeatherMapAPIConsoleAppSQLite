@@ -1,5 +1,4 @@
-﻿
-namespace OpenWeatherMap
+﻿namespace OpenWeatherMap.Models
 {
     internal class SavedLocations
     {
@@ -21,8 +20,8 @@ namespace OpenWeatherMap
             _locationId = locationID;
             _isDefault = isDefault;
         }
-        public string City 
-        { 
+        public string City
+        {
             get { return _city; }
             set { _city = value; }
         }
@@ -30,7 +29,7 @@ namespace OpenWeatherMap
         public string StateCode
         {
             get { return _stateCode; }
-            set { _stateCode = value; } 
+            set { _stateCode = value; }
         }
 
         public string CountryCode
@@ -42,7 +41,7 @@ namespace OpenWeatherMap
         public int LocationId
         {
             get { return _locationId; }
-            set { _locationId = value; }  
+            set { _locationId = value; }
         }
 
         public int IsDefalut

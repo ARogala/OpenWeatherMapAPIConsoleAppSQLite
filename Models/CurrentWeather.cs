@@ -10,7 +10,7 @@
 //https://uni.edu/storm/Wind%20Direction%20slide.pdf
 //https://en.wikipedia.org/wiki/Wind_direction
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Models
 {
     internal record class CurrentWeather(
         [property: JsonPropertyName("coord")] coordRecord Coord,
@@ -25,7 +25,7 @@ namespace OpenWeatherMap
         [property: JsonPropertyName("dt")] long UnixTimeStamp,
         [property: JsonPropertyName("sys")] SunRiseSetUnixStampRecord SunRiseSetUnixStamp,
         [property: JsonPropertyName("name")] string Name);
-    
+
 
     internal record class coordRecord(float lon, float lat);
     internal record class WeatherRecord(string main, string description, string icon);
@@ -52,12 +52,12 @@ namespace OpenWeatherMap
     //rain only shows on api when data is there
     //hr1 Rain volume for the last 1 hour, mm. Please note that only mm as units of measurement are available for this parameter
     //hr3 Rain volume for the last 3 hours, mm. Please note that only mm as units of measurement are available for this parameter
-    internal record class RainRecord([property: JsonPropertyName("1h")] float hr1, [property: JsonPropertyName("3h")] float hr3 );
+    internal record class RainRecord([property: JsonPropertyName("1h")] float hr1, [property: JsonPropertyName("3h")] float hr3);
 
     //snow only shows on api when data is there
     //hr1 Snow volume for the last 1 hour, mm. Please note that only mm as units of measurement are available for this parameter
     //hr3 Snow volume for the last 3 hours, mm. Please note that only mm as units of measurement are available for this parameter
-    internal record class SnowRecord([property: JsonPropertyName("1h")]  float hr1, [property: JsonPropertyName("3h")] float hr3);
+    internal record class SnowRecord([property: JsonPropertyName("1h")] float hr1, [property: JsonPropertyName("3h")] float hr3);
 
     internal record class SunRiseSetUnixStampRecord(long sunrise, long sunset);
 }

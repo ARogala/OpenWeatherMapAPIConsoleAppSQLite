@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using OpenWeatherMap.Models;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;

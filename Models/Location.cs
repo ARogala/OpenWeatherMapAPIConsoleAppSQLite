@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 //https://openweathermap.org/api/geocoding-api
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Models
 {
     internal record class Location(
         [property: JsonPropertyName("name")] string Name,

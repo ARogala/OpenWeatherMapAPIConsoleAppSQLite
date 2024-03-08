@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Models
 {
     internal record class ForecastWeather(
         [property: JsonPropertyName("list")] List<ForecastRecord> Forecast,
