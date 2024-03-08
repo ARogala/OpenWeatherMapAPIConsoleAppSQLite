@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace OpenWeatherMap.Managers
 {
-    internal class ManageFilePath
+   
+    internal static class ManageFilePath
     {
+        private static string appDirectory = Directory.GetCurrentDirectory();
+        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
+
+        public static string GetPath(string fileName)
+        {
+            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
+        }
     }
 }
