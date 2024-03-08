@@ -11,10 +11,7 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageSQL
     {
-        private static string appDirectory = Directory.GetCurrentDirectory();
-        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
-
-        private static string connectionString = $"Data Source={GetPath("Weather.db")}";
+        private static string connectionString = $"Data Source={ManageFilePath.GetPath("Weather.db")}";
         private static SqliteConnection connection = new SqliteConnection(connectionString);
         public static List<SavedLocations> GetSavedLocations()
         {
@@ -346,10 +343,6 @@ namespace OpenWeatherMap.Managers
                 }
             }
             return rowCount;
-        }
-        private static string GetPath(string fileName)
-        {
-            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
         }
     }
 }

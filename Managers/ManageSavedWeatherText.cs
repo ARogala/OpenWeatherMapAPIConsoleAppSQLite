@@ -4,13 +4,11 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageSavedWeatherText
     {
-        private static string appDirectory = Directory.GetCurrentDirectory();
-        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
         public static void SaveCurrentWeatherText(string currentWeather)
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedCurrentWeather.txt")}", false))
+                using (StreamWriter sw = new StreamWriter($"{ManageFilePath.GetPath("SavedCurrentWeather.txt")}", false))
                 {
                     sw.Write(currentWeather);
                 }
@@ -27,7 +25,7 @@ namespace OpenWeatherMap.Managers
             string weatherText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader($"{GetPath("SavedCurrentWeather.txt")}"))
+                using (StreamReader sr = new StreamReader($"{ManageFilePath.GetPath("SavedCurrentWeather.txt")}"))
                 {
                     weatherText = sr.ReadToEnd();
                     return weatherText;
@@ -45,7 +43,7 @@ namespace OpenWeatherMap.Managers
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedCurrentLocation.txt")}", false))
+                using (StreamWriter sw = new StreamWriter($"{ManageFilePath.GetPath("SavedCurrentLocation.txt")}", false))
                 {
                     sw.Write(currentLocation);
                 }
@@ -62,7 +60,7 @@ namespace OpenWeatherMap.Managers
             string locationText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader($"{GetPath("SavedCurrentLocation.txt")}"))
+                using (StreamReader sr = new StreamReader($"{ManageFilePath.GetPath("SavedCurrentLocation.txt")}"))
                 {
                     locationText = sr.ReadToEnd();
                     return locationText;
@@ -80,7 +78,7 @@ namespace OpenWeatherMap.Managers
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedForecastLocation.txt")}", false))
+                using (StreamWriter sw = new StreamWriter($"{ManageFilePath.GetPath("SavedForecastLocation.txt")}", false))
                 {
                     sw.Write(forecastLocation);
                 }
@@ -95,7 +93,7 @@ namespace OpenWeatherMap.Managers
             string locationText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader($"{GetPath("SavedForecastLocation.txt")}"))
+                using (StreamReader sr = new StreamReader($"{ManageFilePath.GetPath("SavedForecastLocation.txt")}"))
                 {
                     locationText = sr.ReadToEnd();
                     return locationText;
@@ -111,7 +109,7 @@ namespace OpenWeatherMap.Managers
         {
             try
             {
-                using (StreamWriter sw = new StreamWriter($"{GetPath("SavedForecast.txt")}", false))
+                using (StreamWriter sw = new StreamWriter($"{ManageFilePath.GetPath("SavedForecast.txt")}", false))
                 {
                     sw.Write(forecast);
                 }
@@ -126,7 +124,7 @@ namespace OpenWeatherMap.Managers
             string forecastText = string.Empty;
             try
             {
-                using (StreamReader sr = new StreamReader($"{GetPath("SavedForecast.txt")}"))
+                using (StreamReader sr = new StreamReader($"{ManageFilePath.GetPath("SavedForecast.txt")}"))
                 {
                     forecastText = sr.ReadToEnd();
                     return forecastText;
@@ -137,11 +135,6 @@ namespace OpenWeatherMap.Managers
                 AnsiConsole.WriteException(e);
             }
             return forecastText;
-        }
-
-        private static string GetPath(string fileName)
-        {
-            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
         }
     }
 }

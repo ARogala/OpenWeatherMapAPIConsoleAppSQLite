@@ -6,14 +6,12 @@ namespace OpenWeatherMap.Managers
     internal static class ManageXML
     {
         private static XDocument apiDoc;
-        private static string appDirectory = Directory.GetCurrentDirectory();
-        private static string dataDirectory = Directory.GetDirectories(appDirectory, "Data").First();
         public static void LoadXML(string docName)
         {
             XDocument xmlDoc = new XDocument();
             try
             {
-                xmlDoc = XDocument.Load(GetPath(docName));
+                xmlDoc = XDocument.Load(ManageFilePath.GetPath(docName));
             }
             catch (Exception e)
             {
@@ -56,11 +54,5 @@ namespace OpenWeatherMap.Managers
                 AnsiConsole.WriteException(e);
             }
         }
-
-        private static string GetPath(string fileName)
-        {
-            return Directory.GetFiles(dataDirectory, $"{fileName}").First();
-        }
-
     }
 }
