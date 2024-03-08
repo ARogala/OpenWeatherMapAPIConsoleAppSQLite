@@ -1,4 +1,5 @@
 ﻿using OpenWeatherMap.Models;
+using OpenWeatherMap.Utilities;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;

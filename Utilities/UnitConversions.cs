@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenWeatherMap
+namespace OpenWeatherMap.Utilities
 {
     internal class UnitConversions
     {
@@ -25,19 +25,19 @@ namespace OpenWeatherMap
 
         public static double MetersToMiles(ushort meters)
         {
-            return (meters / 1000) * 0.6213711922;
+            return meters / 1000 * 0.6213711922;
         }
 
         public static double mmToInch(float mm)
         {
-            return (mm * 0.393701) / (10);
+            return mm * 0.393701 / 10;
         }
 
         public static string WindDegToDir(float windDeg)
         {
             int deg = (int)Math.Round(windDeg, 0);
 
-            if ((deg >= 349 && deg <= 360) || (deg >= 0 && deg <= 11))
+            if (deg >= 349 && deg <= 360 || deg >= 0 && deg <= 11)
             {
                 return "N";
             }
