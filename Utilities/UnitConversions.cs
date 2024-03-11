@@ -36,71 +36,42 @@ namespace OpenWeatherMap.Utilities
         public static string WindDegToDir(float windDeg)
         {
             int deg = (int)Math.Round(windDeg, 0);
-
-            if (deg >= 349 && deg <= 360 || deg >= 0 && deg <= 11)
+            switch (deg)
             {
-                return "N";
-            }
-            else if (deg >= 12 && deg <= 34)
-            {
-                return "NNE";
-            }
-            else if (deg >= 35 && deg <= 56)
-            {
-                return "NE";
-            }
-            else if (deg >= 57 && deg <= 79)
-            {
-                return "ENE";
-            }
-            else if (deg >= 80 && deg <= 101)
-            {
-                return "E";
-            }
-            else if (deg >= 102 && deg <= 124)
-            {
-                return "ESE";
-            }
-            else if (deg >= 125 && deg <= 146)
-            {
-                return "SE";
-            }
-            else if (deg >= 147 && deg <= 169)
-            {
-                return "SSE";
-            }
-            else if (deg >= 170 && deg <= 191)
-            {
-                return "S";
-            }
-            else if (deg >= 192 && deg <= 214)
-            {
-                return "SSW";
-            }
-            else if (deg >= 215 && deg <= 236)
-            {
-                return "SW";
-            }
-            else if (deg >= 237 && deg <= 259)
-            {
-                return "WSW";
-            }
-            else if (deg >= 260 && deg <= 281)
-            {
-                return "W";
-            }
-            else if (deg >= 282 && deg <= 304)
-            {
-                return "WNW";
-            }
-            else if (deg >= 305 && deg <= 326)
-            {
-                return "NW";
-            }
-            // else if (deg >= 327 && deg <= 348) -- any remaining values will be in this range
-            else
-            {
-                return "NNW";
+                case >= 349 and <= 360:
+                case >= 0 and <= 11:
+                    return "N";
+                case >= 12 and <= 34:
+                    return "NNE";
+                case >= 35 and <= 56:
+                    return "NE";
+                case >= 57 and <= 79:
+                    return "ENE";
+                case >= 80 and <= 101:
+                    return "E";
+                case >= 102 and <= 124:
+                    return "ESE";
+                case >= 125 and <= 146:
+                    return "SE";
+                case >= 147 and <= 169:
+                    return "SSE";
+                case >= 170 and <= 191:
+                    return "S";
+                case >= 192 and <= 214:
+                    return "SSW";
+                case >= 215 and <= 236:
+                    return "SW";
+                case >= 237 and <= 259:
+                    return "WSW";
+                case >= 260 and <= 281:
+                    return "W";
+                case >= 282 and <= 304:
+                    return "WNW";
+                case >= 305 and <= 326:
+                    return "NW";
+                //case >= 327 and <= 348 //-- any remaining values will be in this range
+                default:
+                    return "NNW";
             }
         }
     }
