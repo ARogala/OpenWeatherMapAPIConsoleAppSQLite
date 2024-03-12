@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using OpenWeatherMap.Managers;
 using OpenWeatherMap.Models;
 using Spectre.Console;
+using System.Threading;
 
 namespace OpenWeatherMap
 {
@@ -73,8 +74,10 @@ namespace OpenWeatherMap
                 await GetCurrentWeatherOrForecast(true, true);
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
-            
-           
+            //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
+            CancellationTokenSource source = new CancellationTokenSource();
+            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(2), source.Token); });
+
             // Ask for the user's choice
             string choice = GetChoice();
 
@@ -174,6 +177,20 @@ namespace OpenWeatherMap
                         ClearConsole();
                         choice = GetChoice();
                         break;
+                    case "Cancel Recurring Weather Update":
+                        if (!source.IsCancellationRequested)
+                        {
+                            source.Cancel();
+                            source.Dispose();
+                            updateWeatherRecurring.Dispose();
+                            AnsiConsole.WriteLine("Recurring weather update canceled.");
+                        }
+                        else if (source.IsCancellationRequested)
+                        {
+                            AnsiConsole.WriteLine("Recurring weather update already canceled.");
+                        }
+                        choice = GetChoice();
+                        break;
                     case "Quit":
                         quit = true;
                         break;
@@ -270,7 +287,7 @@ namespace OpenWeatherMap
                     .AddChoices(new[] {
                         "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast",
                         "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
-                        "Switch default location", "Remove a saved location","List all saved locations","Quit"
+                        "Switch default location", "Remove a saved location","List all saved locations","Cancel Recurring Weather Update","Quit"
                     }));
             return choice;
         }
@@ -336,6 +353,16 @@ namespace OpenWeatherMap
             else
             {
                 forecastWeather = await ManageAPICalls.GetForecast(location);
+            }
+        }
+
+        private static async Task RecurringWeather(TimeSpan interval, CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(interval, cancellationToken);
+                await GetCurrentWeatherOrForecast(true, true);
+                ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
         }
     }
