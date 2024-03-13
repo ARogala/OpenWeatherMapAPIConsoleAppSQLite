@@ -45,12 +45,16 @@ namespace OpenWeatherMap
             apiKey = ManageXML.GetAPIKey();
             if (apiKey == "")
             {
-                AnsiConsole.WriteLine("No Open Weather Map API key detected you need to input one.");
-                string inputApiKey = AnsiConsole.Ask<string>("What's your [green]API Key[/]?");
+                AnsiConsole.WriteLine("No Open Weather Map API key detected you need to input one. Or input nothing and press Enter to quit.");
+                string inputApiKey = AnsiConsole.Prompt(new TextPrompt<string>("What's your [green]API Key[/]?").AllowEmpty());
                 if (inputApiKey != "")
                 {
                     ManageXML.SetAPIKey(inputApiKey);
                     apiKey = inputApiKey;
+                }
+                else
+                {
+                    System.Environment.Exit(0);
                 }
             }
 
