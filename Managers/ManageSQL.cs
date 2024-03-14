@@ -312,7 +312,7 @@ namespace OpenWeatherMap.Managers
             }
             return rowCount;
         }
-
+        //retruns null 0 or 1
         public static int? HasDefaultLocation()
         {
             int? rowCount = null;

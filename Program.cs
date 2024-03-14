@@ -80,7 +80,7 @@ namespace OpenWeatherMap
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
             CancellationTokenSource source = new CancellationTokenSource();
-            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(2), source.Token); });
+            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), source.Token); });
 
             // Ask for the user's choice
             string choice = GetChoice();
@@ -109,12 +109,9 @@ namespace OpenWeatherMap
                         //remove it
                         ManageSQL.RemoveSavedLocation(locationId);
                         //check if last location was removed -- if true add new one
-                        int? rowCount = ManageSQL.GetLocationRowCount();
-                        if (rowCount == 0)
-                        {
-                            GetAndSaveDefaultLocation();
-                        }
+
                         //check if default was removed -- if true get new default
+                        int? rowCount = ManageSQL.GetLocationRowCount();
                         int? defaultRow = ManageSQL.HasDefaultLocation();
                         if(defaultRow == 0 && rowCount == 0)
                         {
