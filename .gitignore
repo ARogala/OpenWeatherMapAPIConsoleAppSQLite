@@ -6,6 +6,8 @@
 #hide my api key
 APIKEY.xml
 
+.$MainMethodFlowChart.drawio.bkp
+
 # User-specific files
 *.rsuser
 *.suo
