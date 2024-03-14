@@ -54,7 +54,7 @@ namespace OpenWeatherMap.Managers
                 }
 
                 //https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator
-                // the ?? new() resolves teh nullable warning
+                // the ?? new() resolves the nullable warning
                 location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
             }
 
