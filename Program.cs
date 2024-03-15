@@ -354,6 +354,7 @@ namespace OpenWeatherMap
             {
                 await Task.Delay(interval, cancellationToken);
                 await GetCurrentWeatherOrForecast(true, true);
+                ClearConsole();
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
         }
