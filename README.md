@@ -57,11 +57,17 @@ By default, on start up, the app will update the weather for the default locatio
 After each api call made to the current weather endpoint (options "Update weather" and "Get weather from a saved location") the current weather for that location will be saved in the database.
 
 This will be used for metric calculation and historical data.
+	
 	-- Daily and weekly average temp
+
 	-- Daily and weekly high/low temp
+
 	-- Daily and weekly average humidity
+
 	-- Daily and weekly high/low humidity
+
 	-- Daily and weekly rain/snow totals
+
 
 Note: If you delete a location ALL saved SQL weather points will be deleted with it.
 
