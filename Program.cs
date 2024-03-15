@@ -179,20 +179,11 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Cancel Recurring Weather Update":
-                        if (!source.IsCancellationRequested)
-                        {
-                            source.Cancel();
-                            source.Dispose();
-                            updateWeatherRecurring.Dispose();
-                            AnsiConsole.WriteLine("Recurring weather update canceled.");
-                        }
-                        else if (source.IsCancellationRequested)
-                        {
-                            AnsiConsole.WriteLine("Recurring weather update already canceled.");
-                        }
+                        CancelRecurringWeather(source, updateWeatherRecurring);
                         choice = GetChoice();
                         break;
                     case "Quit":
+                        CancelRecurringWeather(source, updateWeatherRecurring);
                         quit = true;
                         break;
                 }
@@ -364,6 +355,21 @@ namespace OpenWeatherMap
                 await Task.Delay(interval, cancellationToken);
                 await GetCurrentWeatherOrForecast(true, true);
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
+            }
+        }
+
+        private static void CancelRecurringWeather(CancellationTokenSource source, Task updateWeatherRecurring)
+        {
+            if (!source.IsCancellationRequested)
+            {
+                source.Cancel();
+                source.Dispose();
+                updateWeatherRecurring.Dispose();
+                AnsiConsole.WriteLine("Recurring weather update canceled.");
+            }
+            else if (source.IsCancellationRequested)
+            {
+                AnsiConsole.WriteLine("Recurring weather update already canceled.");
             }
         }
     }
