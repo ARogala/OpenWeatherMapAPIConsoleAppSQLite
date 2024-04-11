@@ -381,6 +381,45 @@ namespace OpenWeatherMap.Managers
             return defaultLocationId;
 
         }
+
+        public static int? GetWeatherRowCountInTimeRange(int hours, int locationId)
+        {
+            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long unixStampNow = 1712134695;
+            long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
+            int? rowCount = null;
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT COUNT(*) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN $startTime AND $endTime AND location_id == $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$startTime", unixStampNowMinusHours),
+                        new SqliteParameter("$endTime", unixStampNow),
+                        new SqliteParameter("$locationId", locationId)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            rowCount = reader.GetInt32(0);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to check for default location");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return rowCount;
+        }
         private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
         {
             return unixTimeStamp - (hours * 60 * 60);
