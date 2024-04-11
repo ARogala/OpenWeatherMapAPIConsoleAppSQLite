@@ -148,6 +148,10 @@ namespace OpenWeatherMap
                         }
                         choice = GetChoice();
                         break;
+                    case "Get weather statistics":
+                        AnsiConsole.WriteLine("get and display some stats from data base 12 hr avg temp ect..");
+                        choice = GetChoice();
+                        break;
                     case "Get 5 day forecast":
                         await GetCurrentWeatherOrForecast(false, true);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
@@ -277,7 +281,7 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast",
+                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get weather statistics","Get 5 day forecast",
                         "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
                         "Switch default location", "Remove a saved location","List all saved locations","Cancel Recurring Weather Update","Quit"
                     }));

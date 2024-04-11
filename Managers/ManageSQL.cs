@@ -346,5 +346,10 @@ namespace OpenWeatherMap.Managers
             }
             return rowCount;
         }
+
+        private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
+        {
+            return unixTimeStamp - (hours * 60 * 60);
+        }
     }
 }
