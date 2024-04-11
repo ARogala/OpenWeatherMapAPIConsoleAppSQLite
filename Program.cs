@@ -58,6 +58,7 @@ namespace OpenWeatherMap
                 }
             }
 
+            //ensure the app starts with a default location
             CheckForSavedLocations(ManageSQL.GetSavedLocations());
    
             //if saved weather ask to display that or get new data
@@ -149,6 +150,10 @@ namespace OpenWeatherMap
                         choice = GetChoice();
                         break;
                     case "Get weather statistics":
+                        //get default locationId 
+                        //check that there is enough weather data points for default location to get stats
+                        //get the stats -- averages, min max, and sum of rain/snow volume
+                        //display the stats
                         AnsiConsole.WriteLine("get and display some stats from data base 12 hr avg temp ect..");
                         choice = GetChoice();
                         break;

@@ -312,7 +312,7 @@ namespace OpenWeatherMap.Managers
             }
             return rowCount;
         }
-        //retruns null 0 or 1
+        //retruns null(if fails) 0 or 1
         public static int? HasDefaultLocation()
         {
             int? rowCount = null;
@@ -346,7 +346,41 @@ namespace OpenWeatherMap.Managers
             }
             return rowCount;
         }
+        //returns default location id or null if operation fails
+        public static int? DefaultLocationId()
+        {
+            int? defaultLocationId = null;
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
 
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT location_id FROM locations WHERE is_default = $isDefault;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$isDefault", 1)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            defaultLocationId = reader.GetInt32(0);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get default location id");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return defaultLocationId;
+
+        }
         private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
         {
             return unixTimeStamp - (hours * 60 * 60);
