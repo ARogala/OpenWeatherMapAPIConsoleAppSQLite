@@ -39,4 +39,22 @@ CREATE TABLE weather(
 		ON DELETE CASCADE	
 );
 
-SELECT * FROM weather WHERE date_record_saved_utc BETWEEN '2024-03-15 00:00:00' AND '2024-03-15 06:00:00' 
+
+SELECT * FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59' AND location_id == 2;
+
+SELECT * FROM weather WHERE date_record_saved_utc BETWEEN '2024-03-16 13:00:00' AND '2024-03-16 21:00:00' AND location_id == 2;
+
+SELECT COUNT(*) FROM weather WHERE date_record_saved_utc BETWEEN '2024-03-16 13:00:00' AND '2024-03-16 21:00:00' AND location_id == 2;
+
+SELECT * FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712091495' AND '1712134695' AND location_id == 2;
+
+SELECT avg(wind_speed_miles_hr), avg(temperature_fahrenheit) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712091495' AND '1712134695' AND location_id == 2;
+
+SELECT avg(temperature_fahrenheit), avg(pressure_sea_level_hPa), avg(humidity), avg(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712091495' AND '1712134695' AND location_id == 2;
+
+/*
+SELECT avg(temperature_fahrenheit) FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59';
+
+SELECT max(temperature_fahrenheit) FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59';
+
+SELECT min(temperature_fahrenheit) FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59';*/
