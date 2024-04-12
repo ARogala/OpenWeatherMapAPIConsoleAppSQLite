@@ -420,6 +420,50 @@ namespace OpenWeatherMap.Managers
             }
             return rowCount;
         }
+
+        //get the avg stats for the last X hours at a given location
+        public static Dictionary<string, float> GetAverageValuesInTimeRange(int hours, int locationId)
+        {
+            Dictionary<string, float> averageStats = new Dictionary<string, float>();
+            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long unixStampNow = 1712102289;
+            long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
+            
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT avg(temperature_fahrenheit), avg(pressure_sea_level_hPa), avg(humidity), avg(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN $startTime AND $endTime AND location_id == $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$startTime", unixStampNowMinusHours),
+                        new SqliteParameter("$endTime", unixStampNow),
+                        new SqliteParameter("$locationId", locationId)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            averageStats.Add("Temperature", reader.GetFloat(0));
+                            averageStats.Add("Pressure", reader.GetFloat(1));
+                            averageStats.Add("Humidity", reader.GetFloat(2));
+                            averageStats.Add("Wind Speed", reader.GetFloat(3));
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get average stats");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return averageStats;
+        }
         private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
         {
             return unixTimeStamp - (hours * 60 * 60);
