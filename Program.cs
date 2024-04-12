@@ -151,10 +151,24 @@ namespace OpenWeatherMap
                         break;
                     case "Get weather statistics":
                         //get default locationId 
+                        int defaultLocationId = (int)ManageSQL.DefaultLocationId();
                         //check that there is enough weather data points for default location to get stats
+                        int weaterRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(8,defaultLocationId);
+                        if (weaterRowCount == 0)
+                        {
+                            AnsiConsole.WriteLine("No weather data points -- make sure you collect enough data");
+                            choice = GetChoice();
+                            break;
+                        }
                         //get the stats -- averages, min max, and sum of rain/snow volume
+                        Dictionary<string, float> average = ManageSQL.GetAverageValuesInTimeRange(8, defaultLocationId);
                         //display the stats
-                        AnsiConsole.WriteLine("get and display some stats from data base 12 hr avg temp ect..");
+                        AnsiConsole.WriteLine($"Stats for the last {weaterRowCount} data points");
+                        foreach(var kvp in average)
+                        {
+                            AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
+                        }
+                        
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":

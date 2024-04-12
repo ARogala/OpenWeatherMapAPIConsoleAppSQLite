@@ -52,6 +52,11 @@ SELECT avg(wind_speed_miles_hr), avg(temperature_fahrenheit) FROM weather WHERE 
 
 SELECT avg(temperature_fahrenheit), avg(pressure_sea_level_hPa), avg(humidity), avg(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712073489' AND '1712102289' AND location_id == 2;
 
+SELECT max(temperature_fahrenheit), max(pressure_sea_level_hPa), max(humidity), max(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712073489' AND '1712102289' AND location_id == 2;
+
+SELECT min(temperature_fahrenheit), min(pressure_sea_level_hPa), min(humidity), min(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712073489' AND '1712102289' AND location_id == 2;
+
+SELECT sum(rain_volume_last_1hr_inch), sum(snow_volume_last_1hr_inch) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN '1712073489' AND '1712102289' AND location_id == 2;
 /*
 SELECT avg(temperature_fahrenheit) FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59';
 
