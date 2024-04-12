@@ -513,6 +513,51 @@ namespace OpenWeatherMap.Managers
             }
             return maxMinValues;
         }
+
+        //get sum rain snow totals
+        public static Dictionary<string, float> GetTotalValuesInTimeRange(int hours, int locationId)
+        {
+            Dictionary<string, float> sumValues = new Dictionary<string, float>();
+            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long unixStampNow = 1712102289;
+            long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
+
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT sum(rain_volume_last_1hr_inch), sum(snow_volume_last_1hr_inch) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN $startTime AND $endTime AND location_id == $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$startTime", unixStampNowMinusHours),
+                        new SqliteParameter("$endTime", unixStampNow),
+                        new SqliteParameter("$locationId", locationId)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                     
+                        while (reader.Read())
+                        {
+                            if (reader.IsDBNull(0) == false)
+                                sumValues.Add("Rain", reader.GetFloat(0));
+                            if(reader.IsDBNull(1) == false)
+                                sumValues.Add("Snow", reader.GetFloat(1));
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get sum values");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return sumValues;
+        }
         private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
         {
             return unixTimeStamp - (hours * 60 * 60);
