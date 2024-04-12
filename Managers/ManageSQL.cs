@@ -464,6 +464,55 @@ namespace OpenWeatherMap.Managers
             }
             return averageStats;
         }
+
+        //get max and min values
+        public static Dictionary<string, float> GetMaxMinValuesInTimeRange(int hours, int locationId)
+        {
+            Dictionary<string, float> maxMinValues = new Dictionary<string, float>();
+            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            long unixStampNow = 1712102289;
+            long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
+
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT max(temperature_fahrenheit), max(pressure_sea_level_hPa), max(humidity), max(wind_speed_miles_hr), min(temperature_fahrenheit), min(pressure_sea_level_hPa), min(humidity), min(wind_speed_miles_hr) FROM weather WHERE time_weather_data_calculated_unix_utc BETWEEN $startTime AND $endTime AND location_id == $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$startTime", unixStampNowMinusHours),
+                        new SqliteParameter("$endTime", unixStampNow),
+                        new SqliteParameter("$locationId", locationId)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            maxMinValues.Add("Max Temperature", reader.GetFloat(0));
+                            maxMinValues.Add("Max Pressure", reader.GetFloat(1));
+                            maxMinValues.Add("Max Humidity", reader.GetFloat(2));
+                            maxMinValues.Add("Max Wind Speed", reader.GetFloat(3));
+
+                            maxMinValues.Add("Min Temperature", reader.GetFloat(4));
+                            maxMinValues.Add("Min Pressure", reader.GetFloat(5));
+                            maxMinValues.Add("Min Humidity", reader.GetFloat(6));
+                            maxMinValues.Add("Min Wind Speed", reader.GetFloat(7));
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get max min stats");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return maxMinValues;
+        }
         private static long SubtractHoursUnixTimeStamp(long unixTimeStamp, int hours)
         {
             return unixTimeStamp - (hours * 60 * 60);

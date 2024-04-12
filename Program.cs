@@ -168,7 +168,13 @@ namespace OpenWeatherMap
                         {
                             AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
                         }
-                        
+                        //get max min values
+                        Dictionary<string, float> maxMin = ManageSQL.GetMaxMinValuesInTimeRange(8, defaultLocationId);
+                        foreach(var kvp in maxMin)
+                        {
+                            AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
+                        }
+
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
