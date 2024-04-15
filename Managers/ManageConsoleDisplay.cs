@@ -12,6 +12,50 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageConsoleDisplay
     {
+
+        public static void DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
+        {
+            List<Markup> markup = new List<Markup>();
+            //row count
+            markup.Add(new Markup(" "));
+            markup.Add(new Markup($"[bold red]Statistics for the last {weatherRowCount} data points[/]").Centered());
+            markup.Add(new Markup(" "));
+            //average
+            markup.Add(new Markup($"[bold green]Average Temperature: [/]{averages["Temperature"]} Degrees F"));
+            markup.Add(new Markup($"[bold green]Average Pressure: [/]{averages["Pressure"]} hPa"));
+            markup.Add(new Markup($"[bold green]Average Humidity: [/]{averages["Humidity"]} %"));
+            markup.Add(new Markup($"[bold green]Average Wind Speed: [/]{averages["Wind Speed"]} miles/hr"));
+            markup.Add(new Markup(" "));
+            //max
+            markup.Add(new Markup($"[bold green]Max Temperature: [/]{maxMin["Max Temperature"]} Degrees F"));
+            markup.Add(new Markup($"[bold green]Max Pressure: [/]{maxMin["Max Pressure"]} hPa"));
+            markup.Add(new Markup($"[bold green]Max Humidity: [/]{maxMin["Max Humidity"]} %"));
+            markup.Add(new Markup($"[bold green]Max Wind Speed: [/]{maxMin["Max Wind Speed"]} miles/hour"));
+            markup.Add(new Markup(" "));
+            //min
+            markup.Add(new Markup($"[bold green]Min Temperature: [/]{maxMin["Min Temperature"]} Degrees F"));
+            markup.Add(new Markup($"[bold green]Min Pressure: [/]{maxMin["Min Pressure"]} hPa"));
+            markup.Add(new Markup($"[bold green]Min Humidity: [/]{maxMin["Min Humidity"]} %"));
+            markup.Add(new Markup($"[bold green]Min Wind Speed: [/]{maxMin["Min Wind Speed"]} miles/hour"));
+            markup.Add(new Markup(" "));
+            //totals
+            foreach(var kvp in totals)
+            {
+                if(kvp.Key == "Rain")
+                    markup.Add(new Markup($"[bold green]Total Rain: [/]{totals["Rain"]} inches"));
+                if(kvp.Key == "Snow")
+                    markup.Add(new Markup($"[bold green]Total Snow: [/]{totals["Snow"]} inches"));
+            }
+            
+            
+            markup.Add(new Markup(" "));
+
+            Rows statRows = new Rows(markup);
+            Panel statPanel = new Panel(statRows);
+            statPanel.Header = new PanelHeader("Statistics:");
+            statPanel.Width = 75;
+            AnsiConsole.Write(statPanel);
+        }
         public static void DisplayHeader()
         {
             Grid headerGrid = new Grid();

@@ -347,7 +347,7 @@ namespace OpenWeatherMap.Managers
             return rowCount;
         }
         //returns default location id or null if operation fails
-        public static int? DefaultLocationId()
+        public static int? GetDefaultLocationId()
         {
             int? defaultLocationId = null;
             using (connection)
@@ -384,8 +384,7 @@ namespace OpenWeatherMap.Managers
 
         public static int? GetWeatherRowCountInTimeRange(int hours, int locationId)
         {
-            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long unixStampNow = 1712134695;
+            long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
             int? rowCount = null;
             using (connection)
@@ -425,8 +424,7 @@ namespace OpenWeatherMap.Managers
         public static Dictionary<string, float> GetAverageValuesInTimeRange(int hours, int locationId)
         {
             Dictionary<string, float> averageStats = new Dictionary<string, float>();
-            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long unixStampNow = 1712102289;
+            long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
             
             using (connection)
@@ -469,8 +467,7 @@ namespace OpenWeatherMap.Managers
         public static Dictionary<string, float> GetMaxMinValuesInTimeRange(int hours, int locationId)
         {
             Dictionary<string, float> maxMinValues = new Dictionary<string, float>();
-            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long unixStampNow = 1712102289;
+            long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
 
             using (connection)
@@ -518,8 +515,7 @@ namespace OpenWeatherMap.Managers
         public static Dictionary<string, float> GetTotalValuesInTimeRange(int hours, int locationId)
         {
             Dictionary<string, float> sumValues = new Dictionary<string, float>();
-            //long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            long unixStampNow = 1712102289;
+            long unixStampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             long unixStampNowMinusHours = SubtractHoursUnixTimeStamp(unixStampNow, hours);
 
             using (connection)

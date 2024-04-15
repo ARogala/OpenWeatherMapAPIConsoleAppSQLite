@@ -149,39 +149,25 @@ namespace OpenWeatherMap
                         }
                         choice = GetChoice();
                         break;
-                    case "Get weather statistics":
+                    case "Get 8 hour weather statistics":
                         //get default locationId 
-                        int defaultLocationId = (int)ManageSQL.DefaultLocationId();
+                        int defaultLocationId = (int)ManageSQL.GetDefaultLocationId();
                         //check that there is enough weather data points for default location to get stats
-                        int weaterRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(8,defaultLocationId);
-                        if (weaterRowCount == 0)
+                        int weatherRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(8,defaultLocationId);
+                        if (weatherRowCount == 0 || weatherRowCount == 1)
                         {
-                            AnsiConsole.WriteLine("No weather data points -- make sure you collect enough data");
+                            AnsiConsole.MarkupLine("[bold red]Not enough weather data points to display an average[/]");
                             choice = GetChoice();
                             break;
                         }
-                        //get the stats -- averages, min max, and sum of rain/snow volume
-                        Dictionary<string, float> average = ManageSQL.GetAverageValuesInTimeRange(8, defaultLocationId);
-                        //display the stats
-                        AnsiConsole.WriteLine($"Stats for the last {weaterRowCount} data points");
-                        foreach(var kvp in average)
-                        {
-                            AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
-                        }
+                        //averages
+                        Dictionary<string, float> averages = ManageSQL.GetAverageValuesInTimeRange(8, defaultLocationId);
                         //get max min values
                         Dictionary<string, float> maxMin = ManageSQL.GetMaxMinValuesInTimeRange(8, defaultLocationId);
-                        foreach(var kvp in maxMin)
-                        {
-                            AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
-                        }
-                        //get sum values
-                        Dictionary<string, float> total = ManageSQL.GetTotalValuesInTimeRange(8, defaultLocationId);
-                        
-                        foreach (var kvp in total)
-                        {
-                            AnsiConsole.WriteLine($"{kvp.Key} {kvp.Value}");
-                        }
-                        
+                        //get totals values
+                        Dictionary<string, float> totals = ManageSQL.GetTotalValuesInTimeRange(8, defaultLocationId);
+                        //display the stats
+                        ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount);
                         choice = GetChoice();
                         break;
                     case "Get 5 day forecast":
@@ -313,7 +299,7 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get weather statistics","Get 5 day forecast",
+                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 8 hour weather statistics","Get 5 day forecast",
                         "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
                         "Switch default location", "Remove a saved location","List all saved locations","Cancel Recurring Weather Update","Quit"
                     }));
