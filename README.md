@@ -89,10 +89,10 @@ Running this on a single board PC is the best bet for building up a weather data
 There is also a standard linux x64 build that can be used for Ubuntu ect.
 
 ## Plans
-Add weather maps end point https://openweathermap.org/api/weathermaps 
+Add weather maps end point https://openweathermap.org/api/weathermaps
 
 Add the air polution end point https://openweathermap.org/api/air-pollution 
 
-Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui) and build in weather maps end point https://openweathermap.org/api/weathermaps
+Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui)
 
 
