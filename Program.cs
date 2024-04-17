@@ -31,7 +31,7 @@ namespace OpenWeatherMap
                 //Console.WriteLine(Console.LargestWindowHeight);
                 //Console.WriteLine(Console.LargestWindowWidth);
                 //Console.SetWindowSize(150,40);
-                Console.SetWindowSize(150,50);
+                Console.SetWindowSize(150,55);
                 //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 
             }
@@ -80,14 +80,17 @@ namespace OpenWeatherMap
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
-            CancellationTokenSource source = new CancellationTokenSource();
-            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), source.Token); });
+            CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
+            CancellationTokenSource recurringStatisticsSource = new CancellationTokenSource();
+            CancellationTokenSource recurringDisplaySavedWeatherSource = new CancellationTokenSource();
+            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), recurringWeatherSource.Token); });
+            Task updateStatisticsRecurring = Task.Run(() => { RecurringStatistics(TimeSpan.FromMinutes(14), recurringStatisticsSource.Token); });
+            Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMinutes(7), recurringDisplaySavedWeatherSource.Token); });
 
+            // Ask for the user's choice
             string menuSelection = "short";
             string choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
-            // Ask for the user's choice
-            //string choice = GetChoice();
-
+            
             //loop to keep application running and display choices.
             bool quit = false;
             while (quit == false)
@@ -152,24 +155,7 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 8 hour weather statistics":
-                        //get default locationId 
-                        int defaultLocationId = (int)ManageSQL.GetDefaultLocationId();
-                        //check that there is enough weather data points for default location to get stats
-                        int weatherRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(8,defaultLocationId);
-                        if (weatherRowCount == 0 || weatherRowCount == 1)
-                        {
-                            AnsiConsole.MarkupLine("[bold red]Not enough weather data points to display an average[/]");
-                            choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
-                            break;
-                        }
-                        //averages
-                        Dictionary<string, float> averages = ManageSQL.GetAverageValuesInTimeRange(8, defaultLocationId);
-                        //get max min values
-                        Dictionary<string, float> maxMin = ManageSQL.GetMaxMinValuesInTimeRange(8, defaultLocationId);
-                        //get totals values
-                        Dictionary<string, float> totals = ManageSQL.GetTotalValuesInTimeRange(8, defaultLocationId);
-                        //display the stats
-                        ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount);
+                        GetAndDisplayStatistics(8);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 5 day forecast":
@@ -203,7 +189,9 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Cancel Recurring Weather Update":
-                        CancelRecurringWeather(source, updateWeatherRecurring);
+                        CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
+                        CancelRecurringStatistics(recurringStatisticsSource, updateStatisticsRecurring);
+                        CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Display more options":
@@ -215,7 +203,9 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Quit":
-                        CancelRecurringWeather(source, updateWeatherRecurring);
+                        CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
+                        CancelRecurringStatistics(recurringStatisticsSource, updateStatisticsRecurring);
+                        CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
                         quit = true;
                         break;
                 }
@@ -393,6 +383,29 @@ namespace OpenWeatherMap
             }
         }
 
+        private static void GetAndDisplayStatistics(int hours)
+        {
+            //get default locationId 
+            int defaultLocationId = (int)ManageSQL.GetDefaultLocationId();
+            //check that there is enough weather data points for default location to get stats
+            int weatherRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(hours, defaultLocationId);
+            if (weatherRowCount == 0 || weatherRowCount == 1)
+            {
+                ManageConsoleDisplay.DisplayStatisticsError();
+            }
+            else
+            {
+                //averages
+                Dictionary<string, float> averages = ManageSQL.GetAverageValuesInTimeRange(hours, defaultLocationId);
+                //get max min values
+                Dictionary<string, float> maxMin = ManageSQL.GetMaxMinValuesInTimeRange(hours, defaultLocationId);
+                //get totals values
+                Dictionary<string, float> totals = ManageSQL.GetTotalValuesInTimeRange(hours, defaultLocationId);
+                //display the stats
+                ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount);
+            }
+        }
+
         private static async Task RecurringWeather(TimeSpan interval, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -416,6 +429,90 @@ namespace OpenWeatherMap
             else if (source.IsCancellationRequested)
             {
                 AnsiConsole.WriteLine("Recurring weather update already canceled.");
+            }
+        }
+
+       
+        private static async Task RecurringStatistics(TimeSpan interval, CancellationToken cancellationToken)
+        {
+            ushort count = 0;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                count++;
+                await Task.Delay(interval, cancellationToken);
+                //prevent overlap of API Recurring Weather JSON RESPONSE and Get Stats
+                //ANYNUMBER % 1 == 0 if its a whole number
+                //if minute/60 is a fraction show Get Stats else dont
+                //see excel file for better explination
+                if (((count * 14) / 60.00) % 1 != 0)
+                {
+                    ClearConsole();
+                    GetAndDisplayStatistics(8);
+                }
+                //reset count before ushort limit reached
+                //keep it in line with Display saved count hence count*2
+                if (count * 2 == 60000)
+                {
+                    count = 0;
+                }
+            }
+        }
+        
+        private static void CancelRecurringStatistics(CancellationTokenSource source, Task updateStatisticsRecurring)
+        {
+            if (!source.IsCancellationRequested)
+            {
+                source.Cancel();
+                source.Dispose();
+                updateStatisticsRecurring.Dispose();
+                AnsiConsole.WriteLine("Recurring statistics update canceled");
+            }
+            else if (source.IsCancellationRequested)
+            {
+                AnsiConsole.WriteLine("Recurring statistics update already canceled");
+            }
+        }
+
+        private static async Task RecurringDisplaySavedWeather(TimeSpan interval, CancellationToken cancellationToken)
+        {
+            ushort count = 0;
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                count++;
+                await Task.Delay(interval, cancellationToken);
+                //only display saved for odd intervals -- so display saved and get stats don't overlap
+                if (count % 2 != 0)
+                {
+                    ClearConsole();
+                    if (ManageSavedWeatherText.GetCurrentWeatherText() != "")
+                    {
+                        ManageConsoleDisplay.GetAndDisplaySavedWeather();
+                    }
+                    else
+                    {
+                        AnsiConsole.MarkupLine("[bold red]There is no saved weather data.[/]");
+                    }
+                }
+                //reset count before ushort limit reached
+                if (count == 60000)
+                {
+                    count = 0;
+                }
+            }
+        }
+
+        private static void CancelRecurringDisplaySavedWeather(CancellationTokenSource source, Task updateDisplaySavedWeatherRecurring)
+        {
+            if(!source.IsCancellationRequested)
+            {
+                source.Cancel(); 
+                source.Dispose();
+                updateDisplaySavedWeatherRecurring.Dispose();
+                AnsiConsole.WriteLine("Recurring display saved weather update canceled");
+            }
+            else if(source.IsCancellationRequested)
+            {
+                AnsiConsole.WriteLine("Recurring display saved weather update already canceled");
             }
         }
     }

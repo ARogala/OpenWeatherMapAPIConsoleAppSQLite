@@ -12,7 +12,19 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageConsoleDisplay
     {
-
+        public static void DisplayStatisticsError()
+        {
+            List<Markup> markup = new List<Markup>();
+            markup.Add(new Markup(" "));
+            markup.Add(new Markup("[bold red]Not enough weather data points to display an average[/]").Centered());
+            markup.Add(new Markup(" "));
+            Rows statRows = new Rows(markup);
+            Panel statPanel = new Panel(statRows);
+            statPanel.Header = new PanelHeader("Statistics:");
+            statPanel.Width = 75;
+            statPanel.Height = 38;
+            AnsiConsole.Write(statPanel);
+        }
         public static void DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
         {
             List<Markup> markup = new List<Markup>();
@@ -54,6 +66,7 @@ namespace OpenWeatherMap.Managers
             Panel statPanel = new Panel(statRows);
             statPanel.Header = new PanelHeader("Statistics:");
             statPanel.Width = 75;
+            statPanel.Height = 38;
             AnsiConsole.Write(statPanel);
         }
         public static void DisplayHeader()
@@ -148,6 +161,7 @@ namespace OpenWeatherMap.Managers
             Panel currentWeatherPanel = new Panel(currentWeatherRows);
             currentWeatherPanel.Header = new PanelHeader("Current Weather:");
             currentWeatherPanel.Width = 120;
+            currentWeatherPanel.Height = 38;
 
             return currentWeatherPanel;
         }
