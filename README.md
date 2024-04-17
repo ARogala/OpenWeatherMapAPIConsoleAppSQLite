@@ -28,6 +28,8 @@ The three api endpoints in use are
 
 The app will save your locations in a SQLite database and your api key in APIKEY.xml
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
+Weather statistics for the default location will also be displayed every 14 minutes. 
+This feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
 The default location is always the first one entered when the app starts and is changeable.
 Multiple locations can be added. 
 
@@ -54,20 +56,11 @@ Each location entered is saved to the database and is the parent table of weathe
 
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
 
+Weather statistics for the default location will also be displayed every 14 minutes. 
+
+This feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
+
 After each api call made to the current weather endpoint (options "Update weather" and "Get weather from a saved location") the current weather for that location will be saved in the database.
-
-This will be used for metric calculation and historical data.
-	
-	-- Daily and weekly average temp
-
-	-- Daily and weekly high/low temp
-
-	-- Daily and weekly average humidity
-
-	-- Daily and weekly high/low humidity
-
-	-- Daily and weekly rain/snow totals
-
 
 Note: If you delete a location ALL saved SQL weather points will be deleted with it.
 
@@ -75,8 +68,28 @@ No forcast data is saved to SQL
 
 Overall the app is easy to use and a fast way to check the weather and forecast by you.
 
+## Statistics
+
+The current time interval (14 minute) recurring weather statistics are.
+	
+	-- 8 hour average temperature, pressure, humidity, and wind speed.
+
+	-- 8 hour max/min temperature, pressure, humidity, and wind speed.
+
+	-- 8 hour rain/snow totals.
+
+The extended menu displays options for 8 hour, 12 hour, and 24 hour statistics.
+
+Plan/Idea to maybe add an "On this day last year" feature that will show you last years weather for time = now
+
+## Raspberry Pi build
+In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up for the Raspberry Pi.
+The Pi 3 is a 64 bit machine but the standard OS is 32 bit so in that case use the 32 bit build option.
+Running this on a single board PC is the best bet for building up a weather database.
+There is also a standard linux x64 build that can be used for Ubuntu ect.
+
 ## Plans
-Run on raspberry pi to build up your weather database
+Add weather maps end point https://openweathermap.org/api/weathermaps 
 
 Add the air polution end point https://openweathermap.org/api/air-pollution 
 
