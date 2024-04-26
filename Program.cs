@@ -4,6 +4,7 @@ using OpenWeatherMap.Managers;
 using OpenWeatherMap.Models;
 using Spectre.Console;
 using System.Threading;
+using CoordinateSharp;
 
 namespace OpenWeatherMap
 {
@@ -24,6 +25,8 @@ namespace OpenWeatherMap
 
         static async Task Main(string[] args)
         {
+            //CoordinatSharp set default to local time
+            GlobalSettings.Allow_Coordinate_DateTimeKind_Specification = true;
             //linux support??
             //https://stackoverflow.com/questions/53894813/how-to-use-console-setwindowsize-on-linux-using-net-core
             if (OperatingSystem.IsWindows())
