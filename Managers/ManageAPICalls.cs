@@ -23,18 +23,18 @@ namespace OpenWeatherMap.Managers
          * save the location Text -- app state
          * return the fetched Location
          */
-        private static async Task<List<Location>> GetLatLongCoordsAsync(HttpClient client, SavedLocations locationForWeather, bool forCurrentWeather)
+        private static async Task<List<Location>> GetLatLongCoordsAsync(HttpClient client, SavedLocations locationForWeather, GetLocationFor locationFor)
         {
             string json;
             List<Location> location;
             if (locationForWeather.StateCode == "notUS")
             {
                 json = await client.GetStringAsync($"http://api.openweathermap.org/geo/1.0/direct?q={locationForWeather.City},{locationForWeather.CountryCode}&limit=1&appid={apiKey}");
-                if (forCurrentWeather)
+                if (locationFor == GetLocationFor.weather)
                 {
                     ManageSavedWeatherText.SaveCurrentLocationText(json);
                 }
-                else
+                else if (locationFor == GetLocationFor.forecast)
                 {
                     ManageSavedWeatherText.SaveForecastLocationText(json);
                 }
@@ -44,11 +44,11 @@ namespace OpenWeatherMap.Managers
             else
             {
                 json = await client.GetStringAsync($"http://api.openweathermap.org/geo/1.0/direct?q={locationForWeather.City},{locationForWeather.StateCode},{locationForWeather.CountryCode}&limit=1&appid={apiKey}");
-                if (forCurrentWeather)
+                if (locationFor == GetLocationFor.weather)
                 {
                     ManageSavedWeatherText.SaveCurrentLocationText(json);
                 }
-                else
+                else if (locationFor == GetLocationFor.forecast)
                 {
                     ManageSavedWeatherText.SaveForecastLocationText(json);
                 }
@@ -59,31 +59,6 @@ namespace OpenWeatherMap.Managers
             }
 
             return location;
-        }
-
-        private static List<Location> GetLatLongCoordsTest(bool forCurrentWeather)
-        {
-            string json = @"[
-                {
-                ""name"": ""Highland Lakes"",
-                ""lat"": 41.1732669,
-                ""lon"": -74.45902935626548,
-                ""country"": ""US"",
-                ""state"": ""New Jersey""
-                }
-            ]";
-            if (forCurrentWeather)
-            {
-                ManageSavedWeatherText.SaveCurrentLocationText(json);
-            }
-            else
-            {
-                ManageSavedWeatherText.SaveForecastLocationText(json);
-            }
-
-            List<Location> location = JsonSerializer.Deserialize<List<Location>>(json) ?? new();
-            return location;
-
         }
 
         /*
@@ -100,7 +75,7 @@ namespace OpenWeatherMap.Managers
          * 
          * Note: GetLatLongCoordsAsync saves Location Text
          */
-        public static async Task<List<Location>> GetLocation(bool forCurrentWeather, bool defaultLocation, int? atLocationId = null)
+        public static async Task<List<Location>> GetLocation(GetLocationFor locationFor, bool defaultLocation, int? atLocationId = null)
         {
             //limit of 1 on api call so this location List will always have length of 1
             //new list each time -- length always 1
@@ -146,11 +121,11 @@ namespace OpenWeatherMap.Managers
                 );
                 string json = JsonSerializer.Serialize(location);
                 //save to text for forecast and current weather
-                if (forCurrentWeather)
+                if (locationFor == GetLocationFor.weather)
                 {
                     ManageSavedWeatherText.SaveCurrentLocationText(json);
                 }
-                else
+                else if (locationFor == GetLocationFor.forecast)
                 {
                     ManageSavedWeatherText.SaveForecastLocationText(json);
                 }
@@ -162,8 +137,7 @@ namespace OpenWeatherMap.Managers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 try
                 {
-                    location = await GetLatLongCoordsAsync(client, locationForWeather, forCurrentWeather);
-                    //location = GetLatLongCoordsTest(forCurrentWeather);
+                    location = await GetLatLongCoordsAsync(client, locationForWeather, locationFor);
                     //add lat lon to SQL DB
                     ManageSQL.AddLatLonToLocation(location[0].Latitude, location[0].Longitude, locationForWeather.LocationId);
                 }

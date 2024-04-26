@@ -8,6 +8,7 @@ using CoordinateSharp;
 
 namespace OpenWeatherMap
 {
+    public enum GetLocationFor { weather, forecast, airPollution, celestial }
     internal class Program
     {
         //APIKEY.xml stores the apiKey
@@ -73,13 +74,13 @@ namespace OpenWeatherMap
                 }
                 else
                 {
-                    await GetCurrentWeatherOrForecast(true,true);
+                    await GetCurrentWeatherOrForecast(GetLocationFor.weather,true);
                     ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                 }
             }
             else
             {
-                await GetCurrentWeatherOrForecast(true, true);
+                await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
@@ -136,13 +137,13 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Update weather":
-                        await GetCurrentWeatherOrForecast(true, true);
+                        await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get weather from a saved location":
                         locationId = ChooseLocation();
-                        await GetCurrentWeatherOrForecast(true, false, locationId);
+                        await GetCurrentWeatherOrForecast(GetLocationFor.weather, false, locationId);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
@@ -170,13 +171,13 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 5 day forecast":
-                        await GetCurrentWeatherOrForecast(false, true);
+                        await GetCurrentWeatherOrForecast(GetLocationFor.forecast, true);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 5 day forecast from a saved location":
                         locationId = ChooseLocation();
-                        await GetCurrentWeatherOrForecast(false, false, locationId);
+                        await GetCurrentWeatherOrForecast(GetLocationFor.forecast, false, locationId);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
@@ -387,14 +388,14 @@ namespace OpenWeatherMap
             ManageConsoleDisplay.DisplayHeader();
         }
         
-        private static async Task GetCurrentWeatherOrForecast(bool forCurrentWeather, bool defaultLocation, int? atLocationId = null)
+        private static async Task GetCurrentWeatherOrForecast(GetLocationFor locationFor, bool defaultLocation, int? atLocationId = null)
         {
-            location = await ManageAPICalls.GetLocation(forCurrentWeather, defaultLocation, atLocationId);
-            if (forCurrentWeather)
+            location = await ManageAPICalls.GetLocation(locationFor, defaultLocation, atLocationId);
+            if (locationFor == GetLocationFor.weather)
             {
                 currentWeather = await ManageAPICalls.GetCurrentWeather(location);
             }
-            else
+            else if(locationFor == GetLocationFor.forecast)
             {
                 forecastWeather = await ManageAPICalls.GetForecast(location);
             }
@@ -428,7 +429,7 @@ namespace OpenWeatherMap
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(interval, cancellationToken);
-                await GetCurrentWeatherOrForecast(true, true);
+                await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
                 ClearConsole();
                 ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
