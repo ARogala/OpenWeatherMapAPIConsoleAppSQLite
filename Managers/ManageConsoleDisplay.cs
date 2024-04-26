@@ -12,6 +12,11 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageConsoleDisplay
     {
+
+        public static void DisplayCelestialData()
+        {
+            AnsiConsole.WriteLine("Celestial Info here");
+        }
         public static void DisplayStatisticsError()
         {
             List<Markup> markup = new List<Markup>();
