@@ -80,8 +80,9 @@ namespace OpenWeatherMap
             }
             else
             {
-                await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
-                ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
+                //comment out to stop calls for testing
+                //await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
+                //ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
             CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
@@ -192,9 +193,12 @@ namespace OpenWeatherMap
                         }
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
-                    case "Get Celestial Data":
-                        //get and display celestial data for default location
-                        ManageConsoleDisplay.DisplayCelestialData();
+                    case "Get celestial data from a saved location":
+                        //get and display celestial data for selected location
+                        
+                        locationId = ChooseLocation();
+                        List<Location> locationCelestial = await ManageAPICalls.GetLocation(GetLocationFor.celestial, false, locationId);
+                        ManageConsoleDisplay.DisplayCelestialData(locationCelestial);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "List all saved locations":
@@ -316,7 +320,7 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast", "Get Celestial Data",
+                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather","Get 5 day forecast", "Get celestial data from a saved location",
                         "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
                         "Get 5 day forecast from a saved location","Display saved forecast","Add a new location", 
                         "Switch default location", "Remove a saved location","List all saved locations","Cancel Recurring Weather Update","Display short menu","Quit"

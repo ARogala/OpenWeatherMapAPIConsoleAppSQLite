@@ -1,4 +1,5 @@
-﻿using OpenWeatherMap.Models;
+﻿using CoordinateSharp;
+using OpenWeatherMap.Models;
 using OpenWeatherMap.Utilities;
 using Spectre.Console;
 using System;
@@ -12,10 +13,216 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageConsoleDisplay
     {
-
-        public static void DisplayCelestialData()
+        public static void DisplayCelestialData(List<Location> location)
         {
-            AnsiConsole.WriteLine("Celestial Info here");
+            double lat = location[0].Latitude;
+            double lon = location[0].Longitude;
+            DateTime now = DateTime.Now;
+            Coordinate coord = new Coordinate(lat, lon, now);
+
+            Panel locationPanel = LocationDisplayPanel(location);
+            
+            List<Markup> solarMarkup = new List<Markup>();
+            //moon and sun set/rise can be null best to check
+            if (coord.CelestialInfo.SunRise == null || coord.CelestialInfo.SunSet == null)
+            {
+                solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
+            }
+            else
+            {
+                DateTime sunRise = (DateTime)coord.CelestialInfo.SunRise;
+                DateTime sunSet = (DateTime)coord.CelestialInfo.SunSet;
+                DateTime solarNoon = (DateTime)coord.CelestialInfo.SolarNoon;
+                DateTime civilDawn = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDawn;
+                DateTime civilDusk = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDusk;
+                solarMarkup.Add(new Markup($"[bold green]Sun Rise: [/]{sunRise.ToString("h:mm tt")}"));
+                solarMarkup.Add(new Markup($"[bold green]Sun Set: [/]{sunSet.ToString("h:mm tt")}"));
+                solarMarkup.Add(new Markup($"[bold green]Solar Noon: [/]{solarNoon.ToString("h:mm tt")}"));
+                solarMarkup.Add(new Markup($"[bold green]Civil Dawn: [/]{civilDawn.ToString("h:mm tt")}"));
+                solarMarkup.Add(new Markup($"[bold green]Cival Dusk: [/]{civilDusk.ToString("h:mm tt")}"));
+                solarMarkup.Add(new Markup($"[bold green]Hours of Day: [/]{coord.CelestialInfo.DaySpan.TotalHours.ToString("0.#")}"));
+                solarMarkup.Add(new Markup($"[bold green]Hours of Night: [/]{coord.CelestialInfo.NightSpan.TotalHours.ToString("0.#")}"));
+                solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
+                solarMarkup.Add(new Markup($"[bold green]Is Sun Up: [/]{coord.CelestialInfo.IsSunUp}"));  
+            }
+            Rows solarRows = new Rows(solarMarkup);
+            Panel solarPanel = new Panel(solarRows);
+            solarPanel.Header = new PanelHeader($"Solar: {now.ToString("MM/dd/yyyy")}");
+
+            List<Markup> lunarMarkup = new List<Markup>();
+            //moon and sun set/rise can be null best to check
+            if (coord.CelestialInfo.MoonRise == null || coord.CelestialInfo.MoonSet == null)
+            {
+                Console.WriteLine($"Moon Condition {coord.CelestialInfo.MoonCondition}");
+                lunarMarkup.Add(new Markup($"[bold green]Moon Condition [/]{coord.CelestialInfo.MoonCondition}"));
+            }
+            else
+            {
+                DateTime moonRise = (DateTime)coord.CelestialInfo.MoonRise;
+                DateTime moonSet = (DateTime)coord.CelestialInfo.MoonSet;
+                lunarMarkup.Add(new Markup($"[bold green]Moon Rise: [/]{moonRise.ToString("h:mm tt")}"));
+                lunarMarkup.Add(new Markup($"[bold green]Moon Set: [/]{moonSet.ToString("h:mm tt")}"));
+                lunarMarkup.Add(new Markup($"[bold green]Moon Phase Name: [/]{coord.CelestialInfo.MoonIllum.PhaseName}"));
+                lunarMarkup.Add(new Markup($"[bold green]Moon Fraction: [/]{coord.CelestialInfo.MoonIllum.Fraction.ToString("0.##")}"));
+                lunarMarkup.Add(new Markup($"[bold green]Moon Distance: [/]{string.Format("{0:n0}", coord.CelestialInfo.MoonDistance.Miles)} Miles"));
+                lunarMarkup.Add(new Markup($"[bold green]Moon Condition: [/]{coord.CelestialInfo.MoonCondition}"));
+                lunarMarkup.Add(new Markup($"[bold green]Is Moon Up: [/]{coord.CelestialInfo.IsMoonUp}"));
+            }
+            Rows lunarRows = new Rows(lunarMarkup);
+            Panel lunarPanel = new Panel(lunarRows);
+            lunarPanel.Header = new PanelHeader($"Lunar: {now.ToString("MM/dd/yyyy")}");
+
+            /*
+            * Solar Eclipse
+            * NOTE REGARDING SOLAR/LUNAR ECLIPSE PROPERTIES: The Date property for both the Lunar and Solar eclipse classes 
+            * will only return the date of the event. Other properties such as PartialEclipseBegin will give more exact timing 
+            * for event parts.
+            * 
+            * Solar eclipses sometimes occur during sunrise/sunset. 
+            * Eclipse times account for this and will not start or end while the sun is below the horizon.
+            * 
+            * Properties will return 0001/1/1 12:00:00 if the referenced event didn't occur. 
+            * For example if a solar eclipse is not a Total or Annular eclipse, the AorTEclipseBegin property won't 
+            * return a populated DateTime.
+            */
+            SolarEclipse se = coord.CelestialInfo.SolarEclipse;
+            Table solarEclipseTable = new Table();
+            solarEclipseTable.AddColumn("[bold green]Solar Eclipse[/]");
+            solarEclipseTable.AddColumn("[bold green]Date[/]");
+            solarEclipseTable.AddColumn("[bold green]Type[/]");
+            solarEclipseTable.AddColumn("[bold green]Start[/]");
+            solarEclipseTable.AddColumn("[bold green]Peak[/]");
+            solarEclipseTable.AddColumn("[bold green]End[/]");
+            solarEclipseTable.AddColumn("[bold green]Magnitude[/]");
+            solarEclipseTable.AddColumn("[bold green]Covers[/]");
+            List<Markup> lastSolarEclipseMarkup = new List<Markup>();
+            if (se.LastEclipse.HasEclipseData == true)
+            {
+                lastSolarEclipseMarkup.Add(new Markup($"Last Eclipse"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.Date.ToString("MM/dd/yyyy")}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.Type}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.PartialEclispeBegin.ToString("h:mm tt")}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.MaximumEclipse.ToString("h:mm tt")}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.PartialEclipseEnd.ToString("h:mm tt")}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.Magnitude.ToString("0.###")}"));
+                lastSolarEclipseMarkup.Add(new Markup($"{se.LastEclipse.Coverage.ToString("0.###")}"));
+            }
+            solarEclipseTable.AddRow(lastSolarEclipseMarkup);
+            List<Markup> nextSolarEclipseMarkup = new List<Markup>();
+            if (se.NextEclipse.HasEclipseData == true)
+            {
+                nextSolarEclipseMarkup.Add(new Markup($"Next Eclipse"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.Date.ToString("MM/dd/yyyy")}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.Type}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.PartialEclispeBegin.ToString("h:mm tt")}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.MaximumEclipse.ToString("h:mm tt")}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.PartialEclipseEnd.ToString("h:mm tt")}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.Magnitude.ToString("0.###")}"));
+                nextSolarEclipseMarkup.Add(new Markup($"{se.NextEclipse.Coverage.ToString("0.###")}"));
+            }
+            solarEclipseTable.AddRow(nextSolarEclipseMarkup);
+
+            // Equinox/Solstice
+            List<Markup> equinoxMarkup = new List<Markup>();
+            equinoxMarkup.Add(new Markup($"[bold green]Spring Equinox: [/]{coord.CelestialInfo.Equinoxes.Spring.ToString("MM/dd/yyyy h:mm tt")}"));
+            equinoxMarkup.Add(new Markup($"[bold green]Summer Solstice: [/]{coord.CelestialInfo.Solstices.Summer.ToString("MM/dd/yyyy h:mm tt")}"));
+            equinoxMarkup.Add(new Markup($"[bold green]Fall Equinox: [/]{coord.CelestialInfo.Equinoxes.Fall.ToString("MM/dd/yyyy h:mm tt")}"));
+            equinoxMarkup.Add(new Markup($"[bold green]Winter Solstice: [/]{coord.CelestialInfo.Solstices.Winter.ToString("MM/dd/yyyy h:mm tt")}"));
+            Rows equinoxRows = new Rows(equinoxMarkup);
+            Panel equinoxPanel = new Panel(equinoxRows);
+            equinoxPanel.Header = new PanelHeader("Equinox/Solstice:");
+
+            /*
+             * Lunar eclipse
+             * Penumbral magnitude. The fraction of the Moon's diameter that is covered by Earth's penumbra 
+             * (lighter part of Earth's shadow). The penumbral magnitude of a total lunar eclipse is usually 
+             * greater than 2 while the penumbral magnitude of a partial lunar eclipse is always greater than
+             * 1 and usually smaller than 2.
+             * 
+             * Umbral magnitude. The fraction of the Moon's diameter that is covered by Earth's umbra 
+             * (darker part of Earth's shadow) at the instance of the greatest eclipse.
+             */
+            LunarEclipse le = coord.CelestialInfo.LunarEclipse;
+            Table lunarEclipseTable = new Table();
+            lunarEclipseTable.AddColumn("[bold green]Lunar Eclipse[/]");
+            lunarEclipseTable.AddColumn("[bold green]Date[/]");
+            lunarEclipseTable.AddColumn("[bold green]Type[/]");
+            lunarEclipseTable.AddColumn("[bold green]Start[/]");
+            lunarEclipseTable.AddColumn("[bold green]Peak[/]");
+            lunarEclipseTable.AddColumn("[bold green]End[/]");
+            lunarEclipseTable.AddColumn("[bold green]P-Mag[/]");
+            lunarEclipseTable.AddColumn("[bold green]U-Mag[/]");
+            List<Markup> lastLunarEclipseMarkup = new List<Markup>();
+            if (le.LastEclipse.HasEclipseData == true)
+            {
+                lastLunarEclipseMarkup.Add(new Markup($"Last Eclipse"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.Date.ToString("MM/dd/yyyy")}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.Type}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.PenumbralEclipseBegin.ToString("h:mm tt")}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.MidEclipse.ToString("h:mm tt")}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.PenumbralEclispeEnd.ToString("h:mm tt")}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.PenumbralMagnitude.ToString("0.###")}"));
+                lastLunarEclipseMarkup.Add(new Markup($"{le.LastEclipse.UmbralMagnitude.ToString("0.###")}"));
+            }
+            lunarEclipseTable.AddRow(lastLunarEclipseMarkup);
+            List<Markup> nextLunarEclipseMarkup = new List<Markup>();
+            if (le.NextEclipse.HasEclipseData == true)
+            {
+                nextLunarEclipseMarkup.Add(new Markup($"Next Eclipse"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.Date.ToString("MM/dd/yyyy")}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.Type}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.PenumbralEclipseBegin.ToString("h:mm tt")}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.MidEclipse.ToString("h:mm tt")}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.PenumbralEclispeEnd.ToString("h:mm tt")}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.PenumbralMagnitude.ToString("0.###")}"));
+                nextLunarEclipseMarkup.Add(new Markup($"{le.NextEclipse.UmbralMagnitude.ToString("0.###")}"));
+            }
+            lunarEclipseTable.AddRow(nextLunarEclipseMarkup);
+
+            //Perigee/Apogee
+            //Perigee is when moon is nearest to earth
+            //Apogee is when moon is farthest from earth
+            Perigee p = coord.CelestialInfo.Perigee;
+            Apogee a = coord.CelestialInfo.Apogee;
+            Table perigeeApogeeTable = new Table();
+            perigeeApogeeTable.AddColumn("[bold green]Perigee/Apogee[/]");
+            perigeeApogeeTable.AddColumn("[bold green]Time[/]");
+            perigeeApogeeTable.AddColumn("[bold green]Distance[/]");
+            List<Markup> lastPerigeeMarkup = new List<Markup>();
+            lastPerigeeMarkup.Add(new Markup("Last Perigee"));
+            lastPerigeeMarkup.Add(new Markup($"{p.LastPerigee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
+            lastPerigeeMarkup.Add(new Markup($"{string.Format("{0:n0}", p.LastPerigee.Distance.Miles)} Miles"));
+            List<Markup> lastApogeeMarkup = new List<Markup>();
+            lastApogeeMarkup.Add(new Markup("Last Apogee"));
+            lastApogeeMarkup.Add(new Markup($"{a.LastApogee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
+            lastApogeeMarkup.Add(new Markup($"{string.Format("{0:n0}", a.LastApogee.Distance.Miles)} Miles"));
+            List<Markup> nextPerigeeMarkup = new List<Markup>();
+            nextPerigeeMarkup.Add(new Markup("Next Perigee"));
+            nextPerigeeMarkup.Add(new Markup($"{p.NextPerigee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
+            nextPerigeeMarkup.Add(new Markup($"{string.Format("{0:n0}", p.NextPerigee.Distance.Miles)} Miles"));
+            List<Markup> nextApogeeMarkup = new List<Markup>();
+            nextApogeeMarkup.Add(new Markup("Next APogee"));
+            nextApogeeMarkup.Add(new Markup($"{a.NextApogee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
+            nextApogeeMarkup.Add(new Markup($"{string.Format("{0:n0}", a.NextApogee.Distance.Miles)} Miles"));
+
+            perigeeApogeeTable.AddRow(lastPerigeeMarkup);
+            perigeeApogeeTable.AddRow(lastApogeeMarkup);
+            perigeeApogeeTable.AddRow(nextPerigeeMarkup);
+            perigeeApogeeTable.AddRow(nextApogeeMarkup);
+
+            Grid celestialGrid = new Grid();
+            celestialGrid.AddColumn();
+            celestialGrid.AddColumn();
+            celestialGrid.AddColumn();
+            celestialGrid.AddColumn();
+            celestialGrid.AddRow(locationPanel, solarPanel, lunarPanel, equinoxPanel);
+           
+            AnsiConsole.Write(celestialGrid);
+            AnsiConsole.Write(solarEclipseTable);
+            AnsiConsole.Write(lunarEclipseTable);
+            AnsiConsole.Write(perigeeApogeeTable);
+
+
         }
         public static void DisplayStatisticsError()
         {
