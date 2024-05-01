@@ -230,7 +230,7 @@ namespace OpenWeatherMap.Managers
             Rows displayRows = new Rows(panelGrid1, panelGrid2, tableGrid);
             Panel displayPanel = new Panel(displayRows);
             displayPanel.Width = 100;
-            displayPanel.Height = 38;
+            displayPanel.Height = 45;
             displayPanel.Header = new PanelHeader("Celestial Data:");
             return displayPanel;
         }
@@ -238,13 +238,13 @@ namespace OpenWeatherMap.Managers
         {
             List<Markup> markup = new List<Markup>();
             markup.Add(new Markup(" "));
-            markup.Add(new Markup("[bold red]Not enough weather data points to display an average[/]").Centered());
+            markup.Add(new Markup("[bold red]Not enough weather data points\nto display an average.[/]").Centered());
             markup.Add(new Markup(" "));
             Rows statRows = new Rows(markup);
             Panel statPanel = new Panel(statRows);
             statPanel.Header = new PanelHeader("Statistics:");
             statPanel.Width = 50;
-            statPanel.Height = 38;
+            statPanel.Height = 45;
             return statPanel;
         }
         public static Panel DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
@@ -288,14 +288,15 @@ namespace OpenWeatherMap.Managers
             Panel statPanel = new Panel(statRows);
             statPanel.Header = new PanelHeader("Statistics:");
             statPanel.Width = 50;
-            statPanel.Height = 38;
+            statPanel.Height = 45;
             return statPanel;
         }
-        public static void DisplayHeader()
+        public static void DisplayHeader(bool suppressFigletText)
         {
             Grid headerGrid = new Grid();
             headerGrid.AddColumn();
-            headerGrid.AddRow(new FigletText("Weather App").Centered().Color(Color.Green));
+            if(!suppressFigletText)
+                headerGrid.AddRow(new FigletText("Weather App").Centered().Color(Color.Green));
             headerGrid.AddRow(Align.Center(new Panel("[green bold]Powered by: [link]https://openweathermap.org[/][/]").NoBorder()));
             AnsiConsole.Write(headerGrid);
         }
@@ -383,7 +384,7 @@ namespace OpenWeatherMap.Managers
             Panel currentWeatherPanel = new Panel(currentWeatherRows);
             currentWeatherPanel.Header = new PanelHeader("Current Weather:");
             currentWeatherPanel.Width = 120;
-            currentWeatherPanel.Height = 38;
+            currentWeatherPanel.Height = 45;
 
             return currentWeatherPanel;
         }

@@ -41,7 +41,7 @@ namespace OpenWeatherMap
                 
             }
 
-            ManageConsoleDisplay.DisplayHeader();
+            ManageConsoleDisplay.DisplayHeader(true);
 
             //load XML Doc
             ManageXML.LoadXML("APIKEY.xml");
@@ -87,14 +87,14 @@ namespace OpenWeatherMap
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
             CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
-            CancellationTokenSource recurringStatisticsSource = new CancellationTokenSource();
+            CancellationTokenSource recurringStatsAndCelestialSource = new CancellationTokenSource();
             CancellationTokenSource recurringDisplaySavedWeatherSource = new CancellationTokenSource();
             Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), recurringWeatherSource.Token); });
-            Task updateStatisticsRecurring = Task.Run(() => { RecurringStatistics(TimeSpan.FromMinutes(14), recurringStatisticsSource.Token); });
+            Task updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMinutes(14), recurringStatsAndCelestialSource.Token); });
             Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMinutes(7), recurringDisplaySavedWeatherSource.Token); });
-
+            //leave in to test recurring methods
             //Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromSeconds(60), recurringWeatherSource.Token); });
-            //Task updateStatisticsRecurring = Task.Run(() => { RecurringStatistics(TimeSpan.FromMilliseconds(14000), recurringStatisticsSource.Token); });
+            //Task updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMilliseconds(14000), recurringStatsAndCelestialSource.Token); });
             //Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMilliseconds(7000), recurringDisplaySavedWeatherSource.Token); });
 
             // Ask for the user's choice
@@ -165,15 +165,15 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 8 hour weather statistics":
-                        AnsiConsole.Write(GetAndDisplayStatistics(8));
+                        AnsiConsole.Write(GetStatistics(8));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 12 hour weather statistics":
-                        AnsiConsole.Write(GetAndDisplayStatistics(12));
+                        AnsiConsole.Write(GetStatistics(12));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 24 hour weather statistics":
-                        AnsiConsole.Write(GetAndDisplayStatistics(24));
+                        AnsiConsole.Write(GetStatistics(24));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 5 day forecast":
@@ -219,7 +219,7 @@ namespace OpenWeatherMap
                         break;
                     case "Cancel Recurring Weather Update":
                         CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
-                        CancelRecurringStatistics(recurringStatisticsSource, updateStatisticsRecurring);
+                        CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
                         CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
@@ -233,7 +233,7 @@ namespace OpenWeatherMap
                         break;
                     case "Quit":
                         CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
-                        CancelRecurringStatistics(recurringStatisticsSource, updateStatisticsRecurring);
+                        CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
                         CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
                         quit = true;
                         break;
@@ -399,7 +399,7 @@ namespace OpenWeatherMap
         private static void ClearConsole()
         {
             AnsiConsole.Clear();
-            ManageConsoleDisplay.DisplayHeader();
+            ManageConsoleDisplay.DisplayHeader(true);
         }
         
         private static async Task GetCurrentWeatherOrForecast(GetLocationFor locationFor, bool defaultLocation, int? atLocationId = null)
@@ -415,7 +415,7 @@ namespace OpenWeatherMap
             }
         }
 
-        private static Panel GetAndDisplayStatistics(int hours)
+        private static Panel GetStatistics(int hours)
         {
             //get default locationId 
             int defaultLocationId = (int)ManageSQL.GetDefaultLocationId();
@@ -465,7 +465,7 @@ namespace OpenWeatherMap
         }
 
        
-        private static async Task RecurringStatistics(TimeSpan interval, CancellationToken cancellationToken)
+        private static async Task RecurringStatsAndCelestial(TimeSpan interval, CancellationToken cancellationToken)
         {
             ushort count = 0;
             while (!cancellationToken.IsCancellationRequested)
@@ -483,7 +483,7 @@ namespace OpenWeatherMap
                     Grid statCelestialGrid = new Grid();
                     statCelestialGrid.AddColumn();
                     statCelestialGrid.AddColumn();
-                    statCelestialGrid.AddRow(ManageConsoleDisplay.DisplayCelestialData(defaultLocation), GetAndDisplayStatistics(8));
+                    statCelestialGrid.AddRow(ManageConsoleDisplay.DisplayCelestialData(defaultLocation), GetStatistics(8));
                     AnsiConsole.Write(statCelestialGrid);
                 }
                 //reset count before ushort limit reached
@@ -495,18 +495,18 @@ namespace OpenWeatherMap
             }
         }
         
-        private static void CancelRecurringStatistics(CancellationTokenSource source, Task updateStatisticsRecurring)
+        private static void CancelRecurringStatsAndCelestial(CancellationTokenSource source, Task updateStatsAndCelestialRecurring)
         {
             if (!source.IsCancellationRequested)
             {
                 source.Cancel();
                 source.Dispose();
-                updateStatisticsRecurring.Dispose();
-                AnsiConsole.WriteLine("Recurring statistics update canceled");
+                updateStatsAndCelestialRecurring.Dispose();
+                AnsiConsole.WriteLine("Recurring statistics and celestial update canceled");
             }
             else if (source.IsCancellationRequested)
             {
-                AnsiConsole.WriteLine("Recurring statistics update already canceled");
+                AnsiConsole.WriteLine("Recurring statistics and celestial update already canceled");
             }
         }
 
