@@ -13,7 +13,7 @@ namespace OpenWeatherMap.Managers
 {
     internal static class ManageConsoleDisplay
     {
-        public static void DisplayCelestialData(List<Location> location)
+        public static Panel DisplayCelestialData(List<Location> location)
         {
             double lat = location[0].Latitude;
             double lon = location[0].Longitude;
@@ -232,7 +232,7 @@ namespace OpenWeatherMap.Managers
             displayPanel.Width = 100;
             displayPanel.Height = 38;
             displayPanel.Header = new PanelHeader("Celestial Data:");
-            AnsiConsole.Write(displayPanel);
+            return displayPanel;
         }
         public static void DisplayStatisticsError()
         {
@@ -247,7 +247,7 @@ namespace OpenWeatherMap.Managers
             statPanel.Height = 38;
             AnsiConsole.Write(statPanel);
         }
-        public static void DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
+        public static Panel DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
         {
             List<Markup> markup = new List<Markup>();
             //row count
@@ -289,7 +289,7 @@ namespace OpenWeatherMap.Managers
             statPanel.Header = new PanelHeader("Statistics:");
             statPanel.Width = 50;
             statPanel.Height = 38;
-            AnsiConsole.Write(statPanel);
+            return statPanel;
         }
         public static void DisplayHeader()
         {

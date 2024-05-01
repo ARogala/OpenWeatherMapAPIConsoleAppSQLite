@@ -81,8 +81,8 @@ namespace OpenWeatherMap
             else
             {
                 //comment out to stop calls for testing
-                //await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
-                //ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
+                await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
+                ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
             CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
@@ -195,13 +195,13 @@ namespace OpenWeatherMap
                         break;
                     case "Get celestial data":
                         List<Location> defaultLocation = await ManageAPICalls.GetLocation(GetLocationFor.celestial, true);
-                        ManageConsoleDisplay.DisplayCelestialData(defaultLocation);
+                        AnsiConsole.Write(ManageConsoleDisplay.DisplayCelestialData(defaultLocation));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get celestial data from a saved location":
                         locationId = ChooseLocation();
                         List<Location> locationCelestial = await ManageAPICalls.GetLocation(GetLocationFor.celestial, false, locationId);
-                        ManageConsoleDisplay.DisplayCelestialData(locationCelestial);
+                        AnsiConsole.Write(ManageConsoleDisplay.DisplayCelestialData(locationCelestial));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "List all saved locations":
@@ -429,7 +429,7 @@ namespace OpenWeatherMap
                 //get totals values
                 Dictionary<string, float> totals = ManageSQL.GetTotalValuesInTimeRange(hours, defaultLocationId);
                 //display the stats
-                ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount);
+                AnsiConsole.Write(ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount));
             }
         }
 
