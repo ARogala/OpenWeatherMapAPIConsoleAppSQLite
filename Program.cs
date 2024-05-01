@@ -5,6 +5,7 @@ using OpenWeatherMap.Models;
 using Spectre.Console;
 using System.Threading;
 using CoordinateSharp;
+using System.Net.Http.Headers;
 
 namespace OpenWeatherMap
 {
@@ -92,6 +93,10 @@ namespace OpenWeatherMap
             Task updateStatisticsRecurring = Task.Run(() => { RecurringStatistics(TimeSpan.FromMinutes(14), recurringStatisticsSource.Token); });
             Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMinutes(7), recurringDisplaySavedWeatherSource.Token); });
 
+            //Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromSeconds(60), recurringWeatherSource.Token); });
+            //Task updateStatisticsRecurring = Task.Run(() => { RecurringStatistics(TimeSpan.FromMilliseconds(14000), recurringStatisticsSource.Token); });
+            //Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMilliseconds(7000), recurringDisplaySavedWeatherSource.Token); });
+
             // Ask for the user's choice
             string menuSelection = "short";
             string choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
@@ -160,15 +165,15 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 8 hour weather statistics":
-                        GetAndDisplayStatistics(2190);
+                        AnsiConsole.Write(GetAndDisplayStatistics(8));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 12 hour weather statistics":
-                        GetAndDisplayStatistics(12);
+                        AnsiConsole.Write(GetAndDisplayStatistics(12));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 24 hour weather statistics":
-                        GetAndDisplayStatistics(24);
+                        AnsiConsole.Write(GetAndDisplayStatistics(24));
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 5 day forecast":
@@ -410,7 +415,7 @@ namespace OpenWeatherMap
             }
         }
 
-        private static void GetAndDisplayStatistics(int hours)
+        private static Panel GetAndDisplayStatistics(int hours)
         {
             //get default locationId 
             int defaultLocationId = (int)ManageSQL.GetDefaultLocationId();
@@ -418,7 +423,7 @@ namespace OpenWeatherMap
             int weatherRowCount = (int)ManageSQL.GetWeatherRowCountInTimeRange(hours, defaultLocationId);
             if (weatherRowCount == 0 || weatherRowCount == 1)
             {
-                ManageConsoleDisplay.DisplayStatisticsError();
+                return ManageConsoleDisplay.DisplayStatisticsError();
             }
             else
             {
@@ -428,8 +433,8 @@ namespace OpenWeatherMap
                 Dictionary<string, float> maxMin = ManageSQL.GetMaxMinValuesInTimeRange(hours, defaultLocationId);
                 //get totals values
                 Dictionary<string, float> totals = ManageSQL.GetTotalValuesInTimeRange(hours, defaultLocationId);
-                //display the stats
-                AnsiConsole.Write(ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount));
+                //return the stats panel
+                return ManageConsoleDisplay.DisplayStatistics(averages, maxMin, totals, weatherRowCount);
             }
         }
 
@@ -474,7 +479,12 @@ namespace OpenWeatherMap
                 if (((count * 14) / 60.00) % 1 != 0)
                 {
                     ClearConsole();
-                    GetAndDisplayStatistics(8);
+                    List<Location> defaultLocation = await ManageAPICalls.GetLocation(GetLocationFor.celestial, true);
+                    Grid statCelestialGrid = new Grid();
+                    statCelestialGrid.AddColumn();
+                    statCelestialGrid.AddColumn();
+                    statCelestialGrid.AddRow(ManageConsoleDisplay.DisplayCelestialData(defaultLocation), GetAndDisplayStatistics(8));
+                    AnsiConsole.Write(statCelestialGrid);
                 }
                 //reset count before ushort limit reached
                 //keep it in line with Display saved count hence count*2

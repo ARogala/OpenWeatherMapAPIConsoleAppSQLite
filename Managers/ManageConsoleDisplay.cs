@@ -234,7 +234,7 @@ namespace OpenWeatherMap.Managers
             displayPanel.Header = new PanelHeader("Celestial Data:");
             return displayPanel;
         }
-        public static void DisplayStatisticsError()
+        public static Panel DisplayStatisticsError()
         {
             List<Markup> markup = new List<Markup>();
             markup.Add(new Markup(" "));
@@ -245,7 +245,7 @@ namespace OpenWeatherMap.Managers
             statPanel.Header = new PanelHeader("Statistics:");
             statPanel.Width = 50;
             statPanel.Height = 38;
-            AnsiConsole.Write(statPanel);
+            return statPanel;
         }
         public static Panel DisplayStatistics(Dictionary<string,float> averages, Dictionary<string, float> maxMin, Dictionary<string, float> totals, int weatherRowCount)
         {
