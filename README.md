@@ -3,6 +3,7 @@
 ## For the version of the app without the SQLite database go here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)
 ## Uses [Spectre Console](https://github.com/spectreconsole/spectre.console) for the display
+## Uses [Coordinat Sharp](https://coordinatesharp.com/) for the celestial data calculations
 
 ## App screen shot
 
@@ -90,6 +91,12 @@ There is also a standard linux x64 build that can be used for Ubuntu ect.
 
 ## Plans
 Add weather maps end point https://openweathermap.org/api/weathermaps
+
+Add settings options to let the user
+	1. Prevent the app from aking to display saved weather everytime and just automatically update on start
+	2. Suppress or show the header
+	3. Prevent the recurring update from starting
+	4. Display short or long menu by default
 
 Add the air polution end point https://openweathermap.org/api/air-pollution 
 
