@@ -40,10 +40,10 @@ namespace OpenWeatherMap.Managers
                 solarMarkup.Add(new Markup($"[bold green]Solar Noon: [/]{solarNoon.ToString("h:mm tt")}"));
                 solarMarkup.Add(new Markup($"[bold green]Civil Dawn: [/]{civilDawn.ToString("h:mm tt")}"));
                 solarMarkup.Add(new Markup($"[bold green]Cival Dusk: [/]{civilDusk.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Hours of Day: [/]{coord.CelestialInfo.DaySpan.TotalHours.ToString("0.#")}"));
-                solarMarkup.Add(new Markup($"[bold green]Hours of Night: [/]{coord.CelestialInfo.NightSpan.TotalHours.ToString("0.#")}"));
-                solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
-                solarMarkup.Add(new Markup($"[bold green]Is Sun Up: [/]{coord.CelestialInfo.IsSunUp}"));  
+                solarMarkup.Add(new Markup($"[bold green]Hours of Day: [/]{coord.CelestialInfo.DaySpan.TotalHours.ToString("0.##")}"));
+                solarMarkup.Add(new Markup($"[bold green]Hours of Night: [/]{coord.CelestialInfo.NightSpan.TotalHours.ToString("0.##")}"));
+                //solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
+                //solarMarkup.Add(new Markup($"[bold green]Is Sun Up: [/]{coord.CelestialInfo.IsSunUp}"));  
             }
             Rows solarRows = new Rows(solarMarkup);
             Panel solarPanel = new Panel(solarRows);
@@ -65,8 +65,8 @@ namespace OpenWeatherMap.Managers
                 lunarMarkup.Add(new Markup($"[bold green]Moon Phase Name: [/]{coord.CelestialInfo.MoonIllum.PhaseName}"));
                 lunarMarkup.Add(new Markup($"[bold green]Moon Fraction: [/]{coord.CelestialInfo.MoonIllum.Fraction.ToString("0.##")}"));
                 lunarMarkup.Add(new Markup($"[bold green]Moon Distance: [/]{string.Format("{0:n0}", coord.CelestialInfo.MoonDistance.Miles)} Miles"));
-                lunarMarkup.Add(new Markup($"[bold green]Moon Condition: [/]{coord.CelestialInfo.MoonCondition}"));
-                lunarMarkup.Add(new Markup($"[bold green]Is Moon Up: [/]{coord.CelestialInfo.IsMoonUp}"));
+                //lunarMarkup.Add(new Markup($"[bold green]Moon Condition: [/]{coord.CelestialInfo.MoonCondition}"));
+                //lunarMarkup.Add(new Markup($"[bold green]Is Moon Up: [/]{coord.CelestialInfo.IsMoonUp}"));
             }
             Rows lunarRows = new Rows(lunarMarkup);
             Panel lunarPanel = new Panel(lunarRows);
@@ -131,7 +131,7 @@ namespace OpenWeatherMap.Managers
             Rows equinoxRows = new Rows(equinoxMarkup);
             Panel equinoxPanel = new Panel(equinoxRows);
             equinoxPanel.Header = new PanelHeader("Equinox/Solstice:");
-
+ 
             /*
              * Lunar eclipse
              * Penumbral magnitude. The fraction of the Moon's diameter that is covered by Earth's penumbra 
@@ -189,19 +189,19 @@ namespace OpenWeatherMap.Managers
             perigeeApogeeTable.AddColumn("[bold green]Time[/]");
             perigeeApogeeTable.AddColumn("[bold green]Distance[/]");
             List<Markup> lastPerigeeMarkup = new List<Markup>();
-            lastPerigeeMarkup.Add(new Markup("Last Perigee"));
+            lastPerigeeMarkup.Add(new Markup("Last Perigee (nearest)"));
             lastPerigeeMarkup.Add(new Markup($"{p.LastPerigee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
             lastPerigeeMarkup.Add(new Markup($"{string.Format("{0:n0}", p.LastPerigee.Distance.Miles)} Miles"));
             List<Markup> lastApogeeMarkup = new List<Markup>();
-            lastApogeeMarkup.Add(new Markup("Last Apogee"));
+            lastApogeeMarkup.Add(new Markup("Last Apogee (farthest)"));
             lastApogeeMarkup.Add(new Markup($"{a.LastApogee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
             lastApogeeMarkup.Add(new Markup($"{string.Format("{0:n0}", a.LastApogee.Distance.Miles)} Miles"));
             List<Markup> nextPerigeeMarkup = new List<Markup>();
-            nextPerigeeMarkup.Add(new Markup("Next Perigee"));
+            nextPerigeeMarkup.Add(new Markup("Next Perigee (nearest)"));
             nextPerigeeMarkup.Add(new Markup($"{p.NextPerigee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
             nextPerigeeMarkup.Add(new Markup($"{string.Format("{0:n0}", p.NextPerigee.Distance.Miles)} Miles"));
             List<Markup> nextApogeeMarkup = new List<Markup>();
-            nextApogeeMarkup.Add(new Markup("Next APogee"));
+            nextApogeeMarkup.Add(new Markup("Next Apogee (farthest)"));
             nextApogeeMarkup.Add(new Markup($"{a.NextApogee.Date.ToString("MM/dd/yyyy h:mm tt")}"));
             nextApogeeMarkup.Add(new Markup($"{string.Format("{0:n0}", a.NextApogee.Distance.Miles)} Miles"));
 
@@ -210,19 +210,29 @@ namespace OpenWeatherMap.Managers
             perigeeApogeeTable.AddRow(nextPerigeeMarkup);
             perigeeApogeeTable.AddRow(nextApogeeMarkup);
 
-            Grid celestialGrid = new Grid();
-            celestialGrid.AddColumn();
-            celestialGrid.AddColumn();
-            celestialGrid.AddColumn();
-            celestialGrid.AddColumn();
-            celestialGrid.AddRow(locationPanel, solarPanel, lunarPanel, equinoxPanel);
-           
-            AnsiConsole.Write(celestialGrid);
-            AnsiConsole.Write(solarEclipseTable);
-            AnsiConsole.Write(lunarEclipseTable);
-            AnsiConsole.Write(perigeeApogeeTable);
+            Grid panelGrid1 = new Grid();
+            panelGrid1.AddColumn();
+            panelGrid1.AddColumn();
+            panelGrid1.AddColumn();
+            panelGrid1.AddRow(locationPanel, equinoxPanel);
 
+            Grid panelGrid2 = new Grid();
+            panelGrid2.AddColumn();
+            panelGrid2.AddColumn();
+            panelGrid2.AddRow(solarPanel, lunarPanel);
 
+            Grid tableGrid = new Grid();
+            tableGrid.AddColumn();
+            tableGrid.AddRow(solarEclipseTable);
+            tableGrid.AddRow(lunarEclipseTable);
+            tableGrid.AddRow(perigeeApogeeTable);
+
+            Rows displayRows = new Rows(panelGrid1, panelGrid2, tableGrid);
+            Panel displayPanel = new Panel(displayRows);
+            displayPanel.Width = 100;
+            displayPanel.Height = 38;
+            displayPanel.Header = new PanelHeader("Celestial Data:");
+            AnsiConsole.Write(displayPanel);
         }
         public static void DisplayStatisticsError()
         {
@@ -233,7 +243,7 @@ namespace OpenWeatherMap.Managers
             Rows statRows = new Rows(markup);
             Panel statPanel = new Panel(statRows);
             statPanel.Header = new PanelHeader("Statistics:");
-            statPanel.Width = 75;
+            statPanel.Width = 50;
             statPanel.Height = 38;
             AnsiConsole.Write(statPanel);
         }
@@ -245,30 +255,30 @@ namespace OpenWeatherMap.Managers
             markup.Add(new Markup($"[bold red]Statistics for the last {weatherRowCount} data points[/]").Centered());
             markup.Add(new Markup(" "));
             //average
-            markup.Add(new Markup($"[bold green]Average Temperature: [/]{averages["Temperature"]} Degrees F"));
-            markup.Add(new Markup($"[bold green]Average Pressure: [/]{averages["Pressure"]} hPa"));
-            markup.Add(new Markup($"[bold green]Average Humidity: [/]{averages["Humidity"]} %"));
-            markup.Add(new Markup($"[bold green]Average Wind Speed: [/]{averages["Wind Speed"]} miles/hr"));
+            markup.Add(new Markup($"[bold green]Average Temperature: [/]{averages["Temperature"].ToString("0.##")} Degrees F"));
+            markup.Add(new Markup($"[bold green]Average Pressure: [/]{averages["Pressure"].ToString("0.##")} hPa"));
+            markup.Add(new Markup($"[bold green]Average Humidity: [/]{averages["Humidity"].ToString("0.##")} %"));
+            markup.Add(new Markup($"[bold green]Average Wind Speed: [/]{averages["Wind Speed"].ToString("0.##")} miles/hr"));
             markup.Add(new Markup(" "));
             //max
-            markup.Add(new Markup($"[bold green]Max Temperature: [/]{maxMin["Max Temperature"]} Degrees F"));
-            markup.Add(new Markup($"[bold green]Max Pressure: [/]{maxMin["Max Pressure"]} hPa"));
-            markup.Add(new Markup($"[bold green]Max Humidity: [/]{maxMin["Max Humidity"]} %"));
-            markup.Add(new Markup($"[bold green]Max Wind Speed: [/]{maxMin["Max Wind Speed"]} miles/hour"));
+            markup.Add(new Markup($"[bold green]Max Temperature: [/]{maxMin["Max Temperature"].ToString("0.##")} Degrees F"));
+            markup.Add(new Markup($"[bold green]Max Pressure: [/]{maxMin["Max Pressure"].ToString("0.##")} hPa"));
+            markup.Add(new Markup($"[bold green]Max Humidity: [/]{maxMin["Max Humidity"].ToString("0.##")} %"));
+            markup.Add(new Markup($"[bold green]Max Wind Speed: [/]{maxMin["Max Wind Speed"].ToString("0.##")} miles/hour"));
             markup.Add(new Markup(" "));
             //min
-            markup.Add(new Markup($"[bold green]Min Temperature: [/]{maxMin["Min Temperature"]} Degrees F"));
-            markup.Add(new Markup($"[bold green]Min Pressure: [/]{maxMin["Min Pressure"]} hPa"));
-            markup.Add(new Markup($"[bold green]Min Humidity: [/]{maxMin["Min Humidity"]} %"));
-            markup.Add(new Markup($"[bold green]Min Wind Speed: [/]{maxMin["Min Wind Speed"]} miles/hour"));
+            markup.Add(new Markup($"[bold green]Min Temperature: [/]{maxMin["Min Temperature"].ToString("0.##")} Degrees F"));
+            markup.Add(new Markup($"[bold green]Min Pressure: [/]{maxMin["Min Pressure"].ToString("0.##")} hPa"));
+            markup.Add(new Markup($"[bold green]Min Humidity: [/]{maxMin["Min Humidity"].ToString("0.##")} %"));
+            markup.Add(new Markup($"[bold green]Min Wind Speed: [/]{maxMin["Min Wind Speed"].ToString("0.##")} miles/hour"));
             markup.Add(new Markup(" "));
             //totals
             foreach(var kvp in totals)
             {
                 if(kvp.Key == "Rain")
-                    markup.Add(new Markup($"[bold green]Total Rain: [/]{totals["Rain"]} inches"));
+                    markup.Add(new Markup($"[bold green]Total Rain: [/]{totals["Rain"].ToString("0.##")} inches"));
                 if(kvp.Key == "Snow")
-                    markup.Add(new Markup($"[bold green]Total Snow: [/]{totals["Snow"]} inches"));
+                    markup.Add(new Markup($"[bold green]Total Snow: [/]{totals["Snow"].ToString("0.##")} inches"));
             }
             
             
@@ -277,7 +287,7 @@ namespace OpenWeatherMap.Managers
             Rows statRows = new Rows(markup);
             Panel statPanel = new Panel(statRows);
             statPanel.Header = new PanelHeader("Statistics:");
-            statPanel.Width = 75;
+            statPanel.Width = 50;
             statPanel.Height = 38;
             AnsiConsole.Write(statPanel);
         }

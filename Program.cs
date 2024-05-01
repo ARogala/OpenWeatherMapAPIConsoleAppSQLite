@@ -81,8 +81,8 @@ namespace OpenWeatherMap
             else
             {
                 //comment out to stop calls for testing
-                await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
-                ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
+                //await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
+                //ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
             }
             //Run the recurring fetch weather task -- GetChoice blocks main thread so have to start recurring fetch here
             CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
@@ -160,7 +160,7 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 8 hour weather statistics":
-                        GetAndDisplayStatistics(8);
+                        GetAndDisplayStatistics(2190);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
                     case "Get 12 hour weather statistics":
