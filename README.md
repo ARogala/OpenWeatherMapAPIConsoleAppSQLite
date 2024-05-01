@@ -28,8 +28,8 @@ The three api endpoints in use are
 
 The app will save your locations in a SQLite database and your api key in APIKEY.xml
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
-Weather statistics for the default location will also be displayed every 14 minutes. 
-This feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
+Weather statistics and celestial data for the default location will also be displayed every 14 minutes. 
+This statistics feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
 The default location is always the first one entered when the app starts and is changeable.
 Multiple locations can be added. 
 
