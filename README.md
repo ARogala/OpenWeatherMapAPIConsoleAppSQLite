@@ -46,9 +46,9 @@ state abbreviations. For example Use NJ not N.J. Or for country use US not U.S.
 
 ## Motivation for building this app
 
-The main motivation for building this app was to continue learing software development and engineering.
-In addition to the educatational benifits I also just enjoy building pratical and useful applications.
-I also wanted a fast and efficient way to get weather and forecast data without all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
+The main motivation for building this app was to continue learing software development and engineering. 
+In addition to the educatational benifits I also just enjoy building pratical and useful applications and 
+wanted a fast and efficient way to get weather and forecast data without all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
 
 
 ## Data saved in text files
