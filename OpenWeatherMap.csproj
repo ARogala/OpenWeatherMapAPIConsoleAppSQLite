@@ -14,6 +14,9 @@
     <None Update="Data\APIKEY.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="LICENSE.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="meteo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -30,6 +33,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\Weather.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="WindDirection.pdf">

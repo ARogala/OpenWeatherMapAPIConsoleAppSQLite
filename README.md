@@ -1,6 +1,5 @@
 # Open Weather Map Console Application with SQLite
 
-## For the version of the app without the SQLite database go here: https://github.com/ARogala/OpenWeatherMapAPIConsoleApp
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)
 ## Uses [Spectre Console](https://github.com/spectreconsole/spectre.console) for the display
 ## Uses [Coordinat Sharp](https://coordinatesharp.com/) for the celestial data calculations
@@ -20,8 +19,12 @@
 6. Running on Windows 11 -- go to System -> For Developers -> Terminal and set to Windows Console Host (this allows the app to resize the console to the correct width and height)
 
 ## About
-This is a simple app that displays current weather and 5 day 3hr forecast from Open Weather API
-The three api endpoints in use are 
+This is a simple app that displays current weather and 5 day 3hr forecast from Open Weather API.
+By default the app also updates the weather for the default location hourly -- this feature can be stopped with an option in the extended menu.
+Basic weather statistics and celestial data will also be displayed incrementally.
+Both the hourly weather update and the statistics/celestial data features make use of C#'s multithreading capabilities to run tasks on recurring inervals.
+
+The three api Open Weather endpoints in use are 
 
 1. Current weather endpoint https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}
 2. 5 day forecast endpoint https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={APIkey}
@@ -41,18 +44,25 @@ For example, for some reason, the api wouldn't find Parker CO so I used Centenni
 Use [ISO 3166 country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) and if in the US don't put periods or spaces between 
 state abbreviations. For example Use NJ not N.J. Or for country use US not U.S. 
 
-### Data saved in text files
+## Motivation for building this app
+
+The main motivation for building this app was to continue learing software development and engineering.
+In addition to the educatational benifits I also just enjoy building pratical and useful applications.
+I also wanted a fast and efficient way to get weather and forecast data without all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
+
+
+## Data saved in text files
 After each api call made to the current weather endpoint (options "Update weather" and "Get weather from a saved location") 
-the location and current weather will be saved in SavedCurrentLocation.txt and SavedCurrentWeather.txt -- data is over written each time
+the location and current weather will be saved in SavedCurrentLocation.txt and SavedCurrentWeather.txt -- data is overwritten each time
 
 This is to save the application state so api calls can be limited. The option "Display saved weather" pulls the data from the text files not SQL
 
 After each api call made to the forecast endpoint (options "Get 5 day forecast" and "Get 5 day forecast from a saved location") 
-the location and 5 day forcast will be saved in SavedForecastLocation.txt and SavedForecast.txt -- data is over written each time
+the location and 5 day forcast will be saved in SavedForecastLocation.txt and SavedForecast.txt -- data is overwritten each time
 
 This is to save the application state so api calls can be limited. The option "Display saved forecast" pulls the data from the text files not SQL
 
-### Data saved to SQL
+## Data saved to SQL
 Each location entered is saved to the database and is the parent table of weather data points
 
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
@@ -81,7 +91,16 @@ The current time interval (14 minute) recurring weather statistics are.
 
 The extended menu displays options for 8 hour, 12 hour, and 24 hour statistics.
 
-Plan/Idea to maybe add an "On this day last year" feature that will show you last years weather for time = now
+## Celestial Data
+
+The Celestial data displayed include.
+
+	-- Solar: sunrise, sunset, solar noon, civil dawn, civil dusk, hours of day, and hours of night
+	-- Lunar: moonrise, moonset, moon phase, moon fraction, moon distance from Earth
+	-- Last and next solar eclipse data
+	-- Last and next lunar eclipse data
+	-- Lunar perigee and apogee data
+	-- Equinox and solistice dates
 
 ## Raspberry Pi build
 In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up for the Raspberry Pi.
@@ -90,16 +109,17 @@ Running this on a single board PC is the best bet for building up a weather data
 There is also a standard linux x64 build that can be used for Ubuntu ect.
 
 ## Plans
-Add weather maps end point https://openweathermap.org/api/weathermaps
+
+Add an "On this day last year" feature that will display the average temperature and weather conditions for this day last year. 
 
 Add settings options to let the user
-	1. Prevent the app from aking to display saved weather everytime and just automatically update on start
-	2. Suppress or show the header
-	3. Prevent the recurring update from starting
-	4. Display short or long menu by default
+1. Prevent the app from aking to display saved weather everytime and just automatically update on start
+2. Suppress or show the header
+3. Prevent the recurring update from starting
+4. Display short or long menu by default
 
 Add the air polution end point https://openweathermap.org/api/air-pollution 
 
-Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui)
+Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui) or [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0)
 
-
+Once user interface is constructed include weather maps end point https://openweathermap.org/api/weathermaps 
