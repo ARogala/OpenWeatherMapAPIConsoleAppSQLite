@@ -133,6 +133,11 @@ To ensure display statistics and display saved weather don't overlap was easy. O
 It was much trickier to mathematically determine when all three tasks may or may not overlap. For this I just modeled the scenario in Excel and turns out every 420 minutes they will.
 To prevent this my solution is as follows. If minute/60 is a whole number do NOT display statistics/celestial data. See Excel model if you are curious. A picture is worth 1,000 words.
 
+I also chose to use a ushort count variable in RecurringStatsAndCelestial and RecurringDisplaySavedWeather and reset that variable at 60,000. 
+About 6 days of continuious app run time -- calculations in Excel. I could have just used a uint variable but having a variable that can count for 1,167 continuous years seemed wrong to me.
+I have yet to se how the variable reset works out in real life. As my Pi is currently set on a cron job to reboot every morning at 5am.
+But that was the reasoning behind that decision. Easy enought to change at next refactor if necessary.
+
 In the rest of this section I will expain the high level view of how the application is structured.
 
 The Data folder contains the text files for the saved weather and forecast data, the xml for the API key, the SQLite Weather.db file, and a sql script file showing how the tables are structured.
