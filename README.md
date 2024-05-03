@@ -32,7 +32,7 @@ The three api Open Weather endpoints in use are
 
 The app will save your locations in a SQLite database and your api key in APIKEY.xml
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
-Weather statistics and celestial data for the default location will also be displayed every 14 minutes. 
+Weather statistics and celestial data for the default location will also be displayed every 14 minutes  -- this data is not saved to database. 
 This statistics feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
 The default location is always the first one entered when the app starts and is changeable.
 Multiple locations can be added. 
@@ -87,12 +87,10 @@ Overall the app is easy to use and a fast way to check the weather and forecast 
 ## Statistics
 
 The current time interval (14 minute) recurring weather statistics are.
-	
-	-- 8 hour average temperature, pressure, humidity, and wind speed.
 
-	-- 8 hour max/min temperature, pressure, humidity, and wind speed.
-
-	-- 8 hour rain/snow totals.
+* 8 hour average temperature, pressure, humidity, and wind speed.
+* 8 hour max/min temperature, pressure, humidity, and wind speed.
+* 8 hour rain/snow totals.
 
 The extended menu displays options for 8 hour, 12 hour, and 24 hour statistics.
 
@@ -100,12 +98,12 @@ The extended menu displays options for 8 hour, 12 hour, and 24 hour statistics.
 
 The Celestial data displayed include.
 
-	-- Solar: sunrise, sunset, solar noon, civil dawn, civil dusk, hours of day, and hours of night
-	-- Lunar: moonrise, moonset, moon phase, moon fraction, moon distance from Earth
-	-- Last and next solar eclipse data
-	-- Last and next lunar eclipse data
-	-- Lunar perigee and apogee data
-	-- Equinox and solistice dates
+* Solar: sunrise, sunset, solar noon, civil dawn, civil dusk, hours of day, and hours of night
+* Lunar: moonrise, moonset, moon phase, moon fraction, moon distance from Earth
+* Last and next solar eclipse data
+* Last and next lunar eclipse data
+* Lunar perigee and apogee data
+* Equinox and solistice dates
 
 ## Raspberry Pi build
 In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up for the Raspberry Pi.
@@ -115,16 +113,17 @@ There is also a standard linux x64 build that can be used for Ubuntu ect.
 
 ## Plans
 
-Add an "On this day last year" feature that will display the average temperature and weather conditions for this day last year. 
+Add an "On this day last year" feature that will display the average temperature and weather conditions for this day last year.
+Could also add "On this day last month"
 
 Add settings options to let the user
-1. Prevent the app from aking to display saved weather everytime and just automatically update on start
-2. Suppress or show the header
-3. Prevent the recurring update from starting
-4. Display short or long menu by default
+* Prevent the app from aking to display saved weather everytime and just automatically update on start
+* Suppress or show the header
+* Prevent the recurring update from starting
+* Display short or long menu by default
 
 Add the air polution end point https://openweathermap.org/api/air-pollution 
 
-Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui) or [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0)
+Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui), [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0) or both.
 
-Once user interface is constructed include weather maps end point https://openweathermap.org/api/weathermaps 
+Once user mobile MAUI interface is constructed include weather maps end point https://openweathermap.org/api/weathermaps 
