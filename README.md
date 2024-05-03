@@ -112,8 +112,9 @@ The Celestial data displayed include.
 
 For an application of this size I do not feel extensive documention to be necessary.
 I did take time to name variables and methods thoughtfully as well as adding in code comments to explain things throughout the code base.
+
 There is also a MainMethodFlowChart.drawio file that can be opened in [Draw Io](https://www.drawio.com/) which shows the logical flow of the main method. 
-Unfortunatlly, this chart is a bit out of date compared to the applications current state. It was made some time after the recurring weather update feature but before I added statistics and clestial data.
+Unfortunately, this chart is a bit out of date compared to the applications current state. It was made some time after the recurring weather update feature but before I added statistics and clestial data.
 I don't yet know the best way to document software and I suspect many in the industy don't as well. Flow charts are useful but are rather time consuming and hard to keep up to date with app changes.
 This was my first try at a flow chart so be kind. I may have not used the official symbols and way of doing things but it was a useful experience.
 Although it's a bit out of data it does still present a good visual on the logic in the main method and will go a long way in getting you started in the code base.
