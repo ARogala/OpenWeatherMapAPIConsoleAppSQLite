@@ -119,14 +119,14 @@ I don't yet know the best way to document software and I suspect many in the ind
 This was my first try at a flow chart so be kind. I may have not used the official symbols and way of doing things but it was a useful experience.
 Although it's a bit out of data it does still present a good visual on the logic in the main method and will go a long way in getting you started in the code base.
 
-You will also find and Excel file ThreadDisplayCalculaton.xlsx This file serves as an explination to the odd if statement you will see in the RecurringStatsAndCelestial method.
+You will also find and Excel file ThreadDisplayCalculaton.xlsx This file serves as an explanation to the odd if statement you will see in the RecurringStatsAndCelestial method.
 ```
  if (((count * 14) / 60.00) % 1 != 0)
 ```
-The recurring functionality is set to work like this. 
-* Every hour get new weather from Open Weather api save that weather do the data base and display it on the console
-* Every 14 minutes calculate and display statistics and celestial data
-* Every 7 minutes display saved weather from the text file. This is so that statistics and celestial data is displayed for the remainder of the hour.
+The recurring functionality is set up to work like this. 
+* Every hour get new weather from Open Weather api save that weather do the data base and display it on the console.
+* Every 14 minutes calculate and display statistics and celestial data.
+* Every 7 minutes display saved weather from the text file. This is so that statistics and celestial data isn't displayed for the remainder of the hour and the console output shuffles between statistics and weather.
 
 The problem was I needed to figure out the logic to ensure that both or all three of these tasks didn't try to display to the consoel at the same time.
 To ensure display statistics and display saved weather don't overlap was easy. Only display saved weather at odd intervals. The pattern between 7 and 14 is obvious.
