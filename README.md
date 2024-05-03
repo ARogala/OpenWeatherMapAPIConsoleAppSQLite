@@ -135,7 +135,7 @@ To prevent this my solution is as follows. If minute/60 is a whole number do NOT
 
 I also chose to use a ushort count variable in RecurringStatsAndCelestial and RecurringDisplaySavedWeather and reset that variable at 60,000. 
 About 6 days of continuious app run time -- calculations in Excel. I could have just used a uint variable but having a variable that can count for 1,167 continuous years seemed wrong to me.
-I have yet to se how the variable reset works out in real life. As my Pi is currently set on a cron job to reboot every morning at 5am.
+I have yet to see how the variable reset works out in real life. As my Pi is currently set on a cron job to reboot every morning at 5am.
 But that was the reasoning behind that decision. Easy enought to change at next refactor if necessary.
 
 In the rest of this section I will expain the high level view of how the application is structured.
