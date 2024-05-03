@@ -46,10 +46,15 @@ state abbreviations. For example Use NJ not N.J. Or for country use US not U.S.
 
 ## Motivation for building this app
 
-The main motivation for building this app was to continue learing software development and engineering. 
-In addition to the educatational benifits I also just enjoy building pratical and useful applications and 
-wanted a fast and efficient way to get weather and forecast data without all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
-
+* To continue learing software development and engineering. Some core concepts demonstrated are:
+	* Multithreading with C# -- an intersting problem was displaying and saving the updated weather hourly and then also showing statistics/celestial data every 14 minutes (see ThreadDisplayCalculations.xlsx for solution)
+	* Asynchronous programming and consuming data from an API
+	* Basic SQL operations with C#
+	* Writing clean documented code
+* In addition to the educatational benifits I also just enjoy building pratical and useful applications
+* A fast and efficient way to get weather and forecast data without all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
+* Build a weather database for my local area to view historical weather
+* Make use of a Rasbperry Pi PC I had collecting dust
 
 ## Data saved in text files
 After each api call made to the current weather endpoint (options "Update weather" and "Get weather from a saved location") 
