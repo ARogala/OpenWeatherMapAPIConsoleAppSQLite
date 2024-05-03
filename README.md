@@ -18,13 +18,20 @@
 5. Or for Ubuntu run this command in terminal --> dotnet publish -c release -r ubuntu.22.04-x64 --self-contained
 6. Running on Windows 11 -- go to System -> For Developers -> Terminal and set to Windows Console Host (this allows the app to resize the console to the correct width and height)
 
+## Build/Publish Profiles -- Raspberry Pi, Windows, and Linux-x64
+In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up for the Raspberry Pi.
+The Pi 3 is a 64 bit machine but the standard OS is 32 bit so in that case use the 32 bit build option.
+Running this on a single board PC is the best most efficient bet for building up a weather database.
+There is also a standard linux x64 build that can be used for Ubuntu and of course Windows as well.
+C# is awesome!
+
 ## About
 This is a simple app that displays current weather and 5 day 3hr forecast from Open Weather API.
 By default the app also updates the weather for the default location hourly -- this feature can be stopped with an option in the extended menu.
 Basic weather statistics and celestial data will also be displayed incrementally.
 Both the hourly weather update and the statistics/celestial data features make use of C#'s multithreading capabilities to run tasks on recurring inervals.
 
-The three api Open Weather endpoints in use are 
+The three Open Weather API endpoints in use are 
 
 1. Current weather endpoint https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}
 2. 5 day forecast endpoint https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={APIkey}
@@ -43,6 +50,8 @@ For example, for some reason, the api wouldn't find Parker CO so I used Centenni
 
 Use [ISO 3166 country codes](https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes) and if in the US don't put periods or spaces between 
 state abbreviations. For example Use NJ not N.J. Or for country use US not U.S. 
+
+Overall the app is easy to use and a fast way to check the weather and forecast by you. Hope you enjoy it. I am hoping to have the time to make a similar mobile app.
 
 ## Motivation for building this app
 
@@ -72,17 +81,11 @@ Each location entered is saved to the database and is the parent table of weathe
 
 By default, on start up, the app will update the weather for the default location hourly and automatically save the current weather for that default location to the database.
 
-Weather statistics for the default location will also be displayed every 14 minutes. 
-
-This feature needs at least two weather data points in the database and will just diplay "Not enough weather data points to display an average" while the data is being collected.
-
 After each api call made to the current weather endpoint (options "Update weather" and "Get weather from a saved location") the current weather for that location will be saved in the database.
 
 Note: If you delete a location ALL saved SQL weather points will be deleted with it.
 
 No forcast data is saved to SQL
-
-Overall the app is easy to use and a fast way to check the weather and forecast by you.
 
 ## Statistics
 
@@ -105,11 +108,30 @@ The Celestial data displayed include.
 * Lunar perigee and apogee data
 * Equinox and solistice dates
 
-## Raspberry Pi build
-In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up for the Raspberry Pi.
-The Pi 3 is a 64 bit machine but the standard OS is 32 bit so in that case use the 32 bit build option.
-Running this on a single board PC is the best bet for building up a weather database.
-There is also a standard linux x64 build that can be used for Ubuntu ect.
+## Documentation
+
+For an application of this size I do not feel extensive documention to be necessary.
+I did take time to name variables and methods thoughtfully as well as adding in code comments to explain things throughout the code base.
+There is also a MainMethodFlowChart.drawio file that can be opened in [Draw Io](https://www.drawio.com/) which shows the logical flow of the main method. 
+Unfortunatlly, this chart is a bit out of date compared to the applications current state. It was made some time after the recurring weather update feature but before I added statistics and clestial data.
+I don't yet know the best way to document software and I suspect many in the industy don't as well. Flow charts are useful but are rather time consuming and hard to keep up to date with app changes.
+This was my first try at a flow chart so be kind. I may have not used the official symbols and way of doing things but it was a useful experience.
+Although it's a bit out of data it does still present a good visual on the logic in the main method and will go a long way in getting you started in the code base.
+
+In the rest of this section I will expain the high level view of how the application is structured.
+
+The Data folder contains the text files for the saved weather and forecast data, the xml for the API key, the SQLite Weather.db file, and a sql script file showing how the tables are structured.
+
+The Managers folder contains static classes with methods needed for app functionality. 
+This was a good way to factor out and organize the methods needed for app functionality into classes. Their names are self descriptive.
+
+The Models folder contains classes that represent app data used to map JSON and SQL data to C# objects for use in the app.
+* CurrentWeather.cs is to map the current weather JSON to C#
+* ForecastWeather.cs is to map the forcast JSON to C#
+* Location.cs is to map the location JSON to C#
+* Savedlocations.cs is to map SQL locations table data to C#
+
+The Utilities folder contains one class to convert units meeters to miles ect. within the app.
 
 ## Plans
 
