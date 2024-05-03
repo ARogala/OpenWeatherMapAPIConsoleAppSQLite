@@ -119,11 +119,25 @@ I don't yet know the best way to document software and I suspect many in the ind
 This was my first try at a flow chart so be kind. I may have not used the official symbols and way of doing things but it was a useful experience.
 Although it's a bit out of data it does still present a good visual on the logic in the main method and will go a long way in getting you started in the code base.
 
+You will also find and Excel file ThreadDisplayCalculaton.xlsx This file serves as an explination to the odd if statement you will see in the RecurringStatsAndCelestial method.
+```
+ if (((count * 14) / 60.00) % 1 != 0)
+```
+The recurring functionality is set to work like this. 
+* Every hour get new weather from Open Weather api save that weather do the data base and display it on the console
+* Every 14 minutes calculate and display statistics and celestial data
+* Every 7 minutes display saved weather from the text file. This is so that statistics and celestial data is displayed for the remainder of the hour.
+
+The problem was I needed to figure out the logic to ensure that both or all three of these tasks didn't try to display to the consoel at the same time.
+To ensure display statistics and display saved weather don't overlap was easy. Only display saved weather at odd intervals. The pattern between 7 and 14 is obvious.
+It was much trickier to mathematically determine when all three tasks may or may not overlap. For this I just modeled the scenario in Excel and turns out every 420 minutes they will.
+To prevent this my solution is as follows. If minute/60 is a whole number do NOT display statistics/celestial data. See Excel model if you are curious. A picture is worth 1,000 words.
+
 In the rest of this section I will expain the high level view of how the application is structured.
 
 The Data folder contains the text files for the saved weather and forecast data, the xml for the API key, the SQLite Weather.db file, and a sql script file showing how the tables are structured.
 
-The Managers folder contains static classes with methods needed for app functionality. 
+The Managers folder contains static classes with methods needed for app functionality . 
 This was a good way to factor out and organize the methods needed for app functionality into classes. Their names are self descriptive.
 
 The Models folder contains classes that represent app data used to map JSON and SQL data to C# objects for use in the app.
