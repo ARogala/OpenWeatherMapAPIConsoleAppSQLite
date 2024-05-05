@@ -36,7 +36,7 @@ The API key is saved in an xml file.
 The default location is always the first one entered when the app starts and is changeable.
 Multiple locations can be added. Locations can be deleted but note that deleting a location will drop all 
 weather points saved in the database for that location. For now locations cannot be edited so if
-one gets entered wrong delete it and try again. I plan to add an edit feature. 
+a location gets entered wrong delete it and try again. I plan to add an edit feature. 
 
 Locations outside the US can be selected just follow the directions in the app.
 Note: You may have to experiment a bit to get the correct location. Sometimes city names are not found.
@@ -222,7 +222,14 @@ Improve the forecast output by adding a second panel to the right of the main ou
 This second panel will highlight the day, time, and probability of precipitation thus making it 
 easier to get a quick view of the forecast.
 
+Possibly add a recurring forecast output.
+
 Add an edit location feature. Currently if a location is entered wrong it has to be deleted and cannot be edited.
+
+Add alerts -- just red text on weather and or statistics ouput
+* pressure dropping
+* solar/lunar eclipse today
+* Equinox/solistice today
 
 Add settings options to let the user
 * Prevent the app from aking to display saved weather everytime and just automatically update on start
