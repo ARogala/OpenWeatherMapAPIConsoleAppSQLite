@@ -135,7 +135,7 @@ namespace OpenWeatherMap
                         }
                         else if (defaultRow == 0 && rowCount != 0)
                         {
-                            AnsiConsole.WriteLine("You removed you default location please pick another one");
+                            AnsiConsole.WriteLine("You removed your default location please pick another one");
                             locationId = ChooseLocation();
                             ManageSQL.ChangeDefaultLocation(locationId);
                         }
