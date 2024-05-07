@@ -344,6 +344,37 @@ namespace OpenWeatherMap.Managers
             }
         }
 
+        public static void EditLocation(string city, string stateCode, string countryCode, int editLocationId)
+        {
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+                    //make sure lat and lon is null when updating -- need to get new lat lon 
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        UPDATE locations SET city_name = $city, latitude = $lat, longitude = $lon, country = $countryCode, state = $stateCode WHERE location_id = $locationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$city", city),
+                        new SqliteParameter("$lat", DBNull.Value),
+                        new SqliteParameter("$lon", DBNull.Value),
+                        new SqliteParameter("$countryCode", countryCode),
+                        new SqliteParameter("$stateCode", stateCode),
+                        new SqliteParameter("$locationId", editLocationId)
+                    });
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to update/edit location");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+        }
         public static void RemoveSavedLocation(int removeLocationId)
         {
             using (connection)

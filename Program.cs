@@ -119,6 +119,12 @@ namespace OpenWeatherMap
                         ManageSQL.ChangeDefaultLocation(locationId);
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
+                    case "Edit a saved location":
+                        locationId = ChooseLocation();
+                        List<string> editLocation = GetNewLocationInput();
+                        ManageSQL.EditLocation(editLocation[0], editLocation[1], editLocation[2], locationId);
+                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        break;
                     case "Remove a saved location":
                         //get location ID to remove
                         locationId = ChooseLocation();
@@ -332,7 +338,7 @@ namespace OpenWeatherMap
                         "Get 5 day forecast","Get 5 day forecast from a saved location","Display saved forecast",
                         "Get celestial data","Get celestial data from a saved location",
                         "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
-                        "Add a new location","Switch default location", "Remove a saved location","List all saved locations",
+                        "Add a new location","Switch default location","Edit a saved location", "Remove a saved location","List all saved locations",
                         "Cancel Recurring Weather Update","Display short menu","Quit"
                     }));
             return choice;
