@@ -1,4 +1,4 @@
-# Open Weather Map Console Application with SQLite
+# OpenWeather Map Console Application with SQLite
 
 ## Powered by [OpenWeatherMap.org](https://openweathermap.org/)
 ## [Spectre Console](https://github.com/spectreconsole/spectre.console) for the display
@@ -30,7 +30,7 @@ C# is awesome!
 
 ## About
 
-This is a simple app that displays current weather and 5 day 3 hour forecast from Open Weather API.
+This is a simple app that displays current weather and 5 day 3 hour forecast from OpenWeather API.
 The app will save locations and weather data for those locations in a SQLite database. 
 The API key is saved in an xml file.
 The default location is always the first one entered when the app starts and is changeable.
@@ -38,7 +38,7 @@ Multiple locations can be added. Locations can be deleted but note that deleting
 weather points saved in the database for that location. For now locations cannot be edited so if
 a location gets entered wrong delete it and try again. I plan to add an edit feature. 
 
-Locations outside the US can be selected just follow the directions in the app.
+Locations outside the US can be selected just follow the directions in the app.<br/>
 Note: You may have to experiment a bit to get the correct location. Sometimes city names are not found.
 For example, for some reason, the API wouldn't find Parker CO so I used Centennial CO -- a town or two north. 
 
@@ -69,13 +69,13 @@ and forecast occassionally throughout the day but is not looking to build a data
 Both the hourly weather update and the statistics/celestial data features make use of C#'s multithreading 
 capabilities to run tasks on recurring inervals.
 
-The three Open Weather API endpoints in use are 
+The three OpenWeather API endpoints in use are 
 
-1. Current weather endpoint 
+1. [Current weather endpoint](https://openweathermap.org/current) 
     * https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={APIkey}
-2. 5 day forecast endpoint 
+2. [5 day forecast endpoint](https://openweathermap.org/forecast5) 
     * https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&units=imperial&appid={APIkey}
-3. Location endpoint 
+3. [Geocoding endpoint](https://openweathermap.org/api/geocoding-api) 
     * http://api.openweathermap.org/geo/1.0/direct?q={cityName},{stateCode},{countryCode}&limit={limit}&appid={APIkey}
 
 Overall the app is easy to use and a fast way to check the weather and forecast by you. 
@@ -90,7 +90,7 @@ Hope you enjoy it. I am hoping to have the time to make a similar mobile app.
         (see ThreadDisplayCalculations.xlsx for solution)
 	* Asynchronous programming and consuming data from an API
 	* Basic SQL operations with C#
-	* Writing clean documented code
+* Improve my code organization and documentation
 * In addition to the educatational benifits I also just enjoy building pratical and useful applications
 * A fast and efficient way to get weather and forecast data without 
   all the FULL PAGE ADVERTISEMENTS one encounters on many of the leading websites.
@@ -162,7 +162,9 @@ For an application of this size I do not feel extensive documention to be necess
 I did take time to name variables and methods thoughtfully as well as adding in code comments 
 to explain things throughout the code base.
 
-There is also a MainMethodFlowChart.drawio file that can be opened in [Draw Io](https://www.drawio.com/).
+#### Main Method flow chart
+
+There is also a **MainMethodFlowChart.drawio** file that can be opened in [Draw Io](https://www.drawio.com/).
 This chart shows the logical flow of the main method. Unfortunately, this chart is a bit out of date compared 
 to the applications current state. It was made some time after the recurring weather update feature but 
 before I added statistics and clestial data. I don't yet know the best way to document software. 
@@ -171,13 +173,15 @@ This was my first try at a flow chart so be kind. I likely did not used the offi
 things but it was a useful experience. Although it's a bit out of date it does still present a good visual on 
 the logic in the main method and will go a long way in getting started in the code base.
 
-You will also find an Excel file ThreadDisplayCalculaton.xlsx 
+#### Recurring weather and statistics/celestial upate
+
+You will also find an Excel file **ThreadDisplayCalculaton.xlsx** 
 This file serves as an explanation to the odd if statement you will see in the RecurringStatsAndCelestial method.
 ```
  if (((count * 14) / 60.00) % 1 != 0)
 ```
-The recurring functionality is set up to work like this. 
-* Every hour get new weather from Open Weather API save that weather do the data base and display it on the console.
+The recurring functionality is designed work like this. 
+* Every hour get new weather from OpenWeather API save that weather do the data base and display it on the console.
 * Every 14 minutes calculate and display statistics and celestial data.
 * Every 7 minutes display saved weather from the text file. 
     * This is so that statistics and celestial data isn't displayed for the remainder 
@@ -187,7 +191,7 @@ The problem was I needed to figure out the logic to ensure that both or all thre
 try to display to the consoel at the same time. To ensure display statistics and display saved weather 
 don't overlap was easy. Only display saved weather at odd intervals. The pattern between 7 and 14 is obvious.
 It was much trickier to mathematically determine when all three tasks may or may not overlap. 
-For this I just modeled the scenario in Excel and it turns out every 420 minutes they will.
+To solve this I modeled the scenario in Excel and found out every 420 minutes all three tasks will operlap.
 To prevent this my solution is as follows. If minute/60 is a whole number do NOT display statistics/celestial data. 
 See Excel model if you are curious. A picture is worth 1,000 words.
 
@@ -196,14 +200,43 @@ and reset that variable at 60,000. About 6 days of continuious app run time -- c
 I could have just used a uint variable but having a variable that can count for 1,167 continuous years seemed wrong to me.
 That was the reasoning behind that decision. Easy enough to change at next refactor if necessary.
 
-In the rest of this section I will expain the high level view of how the application is structured.
+#### ManageAPICalls Class
+
+The **ManageAPICalls.cs** class is commented well but is complex enough a high level overview is useful.
+OpenWeather API endpoints for current weather, forecast, and air pollution require latitude and longitude to fetch the data.
+Therefore, after the user enters a location the app needes to query the Geocoding endpoint to get the latitude and longitude for the
+entered location before weather, forecast, or air pollution data can be fetched.
+
+ManageAPICalls has three public methods: GetLocation, GetCurrentWeather, and GetForecast
+
+GetLocation is designed to return a location that has latitude and longitude populated.<br/>
+It does this by:
+1. gets the specified location (default or at an id) from the database.
+2. if that location has latitude and longitude populated 
+    * save that location to the appropriate text file -- for app state feature
+    * return that location
+3. if that location does not have latitude and longitude populated
+    * use Geocoding endpoint to get latitude and longitude
+    * save that location to the appropriate text file
+    * update the location in the database with latitude and longitude
+    * return that location
+
+GetCurrentWeather gets the weather from the weather endpoint, saves the weather to the database, and returns the weather.
+
+GetForecast gets and returns the forecast. Forecast is not saved to the database
+
+There is a public enum variable named GetLocationFor that is used to toggle between saving weather or forecast text.
+This was added in because I needed to get location for the celestial data without saving anything to the text for application state
+
+#### How application code is organized
 
 The Data folder contains the text files for the saved weather and forecast data, the xml for the API key, 
 the SQLite Weather.db file, and a sql script file showing how the tables are structured.
 
-The Managers folder contains static classes with methods needed for app functionality . 
+The Managers folder contains static classes with methods needed for app functionality. 
 This was a good way to factor out and organize the methods needed for app functionality into classes. 
-Their names are self descriptive.
+Their names are self descriptive. However the **ManageSavedWeatherText.cs** class manages the text files for both
+weather and forecast.
 
 The Models folder contains classes that represent app data used to map JSON and SQL data to C# objects for use in the app.
 * CurrentWeather.cs is to map the current weather JSON to C#
@@ -211,7 +244,7 @@ The Models folder contains classes that represent app data used to map JSON and 
 * Location.cs is to map the location JSON to C#
 * Savedlocations.cs is to map SQL locations table data to C#
 
-The Utilities folder contains one class to convert units meters to miles etc. within the app.
+The Utilities folder contains one class to convert units; meters to miles etc. within the app.
 
 ## Plans
 
@@ -230,6 +263,8 @@ Add alerts -- just red text on weather and or statistics ouput
 * pressure dropping
 * solar/lunar eclipse today
 * Equinox/solistice today
+* Bad weather/rain alert 
+    * may end up saving some forecast data to database to do this. Then remove text base app state feature. 
 
 Add settings options to let the user
 * Prevent the app from aking to display saved weather everytime and just automatically update on start
@@ -237,7 +272,7 @@ Add settings options to let the user
 * Prevent the recurring update from starting
 * Display short or long menu by default
 
-Add the air polution end point https://openweathermap.org/api/air-pollution 
+Add the air pollution end point https://openweathermap.org/api/air-pollution 
 
 Make an actual user interface maybe with [Terminal.Gui](https://github.com/gui-cs/Terminal.Gui), 
 [.NET MAUI](https://learn.microsoft.com/en-us/dotnet/maui/what-is-maui?view=net-maui-8.0) or both.

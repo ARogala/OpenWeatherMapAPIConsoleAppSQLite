@@ -16,7 +16,7 @@ namespace OpenWeatherMap
         //string apiKey is used for api call
         private static string apiKey = String.Empty;
 
-        //Weather.db is SQLite databse it stores locations and weather events for the locations
+        //Weather.db is SQLite database it stores locations and weather events for the locations
         //SavedLocation.cs is is the class that stores location values from database
         //Location.cs is record class that stores api returned data
         private static List<SavedLocations> savedLocationsList;
@@ -464,7 +464,6 @@ namespace OpenWeatherMap
             }
         }
 
-       
         private static async Task RecurringStatsAndCelestial(TimeSpan interval, CancellationToken cancellationToken)
         {
             ushort count = 0;
