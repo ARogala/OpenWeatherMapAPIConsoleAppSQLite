@@ -221,12 +221,17 @@ It does this by:
     * update the location in the database with latitude and longitude
     * return that location
 
+The GetLocation method can be improved. Could start by adding a SQL method to get location by id and a SQL method to get the 
+default location. 
+
 GetCurrentWeather gets the weather from the weather endpoint, saves the weather to the database, and returns the weather.
 
 GetForecast gets and returns the forecast. Forecast is not saved to the database
 
 There is a public enum variable named GetLocationFor that is used to toggle between saving weather or forecast text.
 This was added in because I needed to get location for the celestial data without saving anything to the text for application state
+
+See in code comments for other documentation
 
 #### How application code is organized
 
