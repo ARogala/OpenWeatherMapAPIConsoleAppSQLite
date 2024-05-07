@@ -34,9 +34,9 @@ This is a simple app that displays current weather and 5 day 3 hour forecast fro
 The app will save locations and weather data for those locations in a SQLite database. 
 The API key is saved in an xml file.
 The default location is always the first one entered when the app starts and is changeable.
-Multiple locations can be added. Locations can be deleted but note that deleting a location will drop all 
-weather points saved in the database for that location. For now locations cannot be edited so if
-a location gets entered wrong delete it and try again. I plan to add an edit feature. 
+Multiple locations can be added and entered locations can be edited. 
+Locations can be deleted but note that deleting a location will drop all 
+weather points saved in the database for that location.
 
 Locations outside the US can be selected just follow the directions in the app.<br/>
 Note: You may have to experiment a bit to get the correct location. Sometimes city names are not found.
@@ -258,8 +258,6 @@ This second panel will highlight the day, time, and probability of precipitation
 easier to get a quick view of the forecast.
 
 Possibly add a recurring forecast output.
-
-Add an edit location feature. Currently if a location is entered wrong it has to be deleted and cannot be edited.
 
 Add alerts -- just red text on weather and or statistics ouput
 * pressure dropping
