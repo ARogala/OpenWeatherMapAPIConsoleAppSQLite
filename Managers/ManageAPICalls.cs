@@ -65,13 +65,12 @@ namespace OpenWeatherMap.Managers
          * This is the public method that will call GetLatLongCoordsAsync to get the location and lat lon needed for Weather and Forecast
          * if SavedLocation in database already has lat lon GetLatLongCoordsAsync will not be called 
          * 
-         * 1. GetSavedLocations from database
-         * 2. if defaultLocation true get the default location and set it equal to locationForWeather
+         * 1. if defaultLocation true get the default location and set it equal to locationForWeather
          *    else get the location at the atLocationId and set it equal to locationForWeather  
-         * 3. set the currentLocationId variable equal to the locationForWeather Id -- used to SaveCurrentWeather to database
-         * 4. to prevent additional api calls if DB value locationForWeather has lat lon add locationForWeather to location list and save location text -- app state
+         * 2. set the currentLocationId variable equal to the locationForWeather Id -- used to SaveCurrentWeather to database
+         * 3. to prevent additional api calls if DB value locationForWeather has lat lon add locationForWeather to location list and save location text -- app state
          *    else get lat lon from api GetLatLongCoordsAsync and save lat lon to DB
-         * 5. return the Location List -- length always 1
+         * 4. return the Location List -- length always 1
          * 
          * Note: GetLatLongCoordsAsync saves Location Text
          */
@@ -80,31 +79,14 @@ namespace OpenWeatherMap.Managers
             //limit of 1 on api call so this location List will always have length of 1
             //new list each time -- length always 1
             List<Location> location = new List<Location>();
-
-            List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
-            //default to id = 0 but need to get right loaction based on Id or defaultLocation bool value
-            SavedLocations locationForWeather = savedLocationsList[0];
-            if (defaultLocation)
+            SavedLocations locationForWeather = new SavedLocations();
+            if(defaultLocation)
             {
-                foreach (SavedLocations savedLocation in savedLocationsList)
-                {
-                    if (savedLocation.IsDefalut == 1)
-                    {
-                        locationForWeather = savedLocation;
-                        break;
-                    }
-                }
+                locationForWeather = ManageSQL.GetDefaultLocation();
             }
             else
             {
-                foreach (SavedLocations savedLocation in savedLocationsList)
-                {
-                    if (savedLocation.LocationId == atLocationId)
-                    {
-                        locationForWeather = savedLocation;
-                        break;
-                    }
-                }
+                locationForWeather = ManageSQL.GetLocationAtId((int)atLocationId);
             }
             //save current location id -- used to save current weather in GetCurrentWeather method
             currentLocationId = locationForWeather.LocationId;
