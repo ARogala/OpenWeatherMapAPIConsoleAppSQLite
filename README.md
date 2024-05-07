@@ -267,7 +267,7 @@ Add alerts -- just red text on weather and or statistics ouput
     * may end up saving some forecast data to database to do this. Then remove text base app state feature. 
 
 Add settings options to let the user
-* Prevent the app from aking to display saved weather everytime and just automatically update on start
+* Prevent the app from asking to display saved weather everytime and just automatically update on start
 * Suppress or show the header
 * Prevent the recurring update from starting
 * Display short or long menu by default

@@ -1,7 +1,24 @@
 drop table if exists locations;
 drop table if exists weather;
+drop table if exists settings;
+/*
+ 0 false 1 true
+ SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as integers 0 (false) and 1 (true).
 
-create table locations(
+ set this table to have a max of 1 row -- as its only a settings table there should only be 1 setting row. 
+ https://stackoverflow.com/questions/33104101/ensure-sqlite-table-only-has-one-row
+*/
+CREATE TABLE settings(
+	settings_id INTEGER PRIMARY KEY CHECK (settings_id = 0),
+	display_saved_weather INTEGER NOT NULL,
+	suppress_header INTEGER NOT NULL,
+	recurring_update INTEGER NOT NULL,
+	extended_menu INTEGER NOT NULL
+);
+
+INSERT INTO settings (settings_id, display_saved_weather, suppress_header, recurring_update, extended_menu) VALUES(0,0,1,1,0)
+
+CREATE TABLE locations(
 	location_id INTEGER PRIMARY KEY,
 	city_name TEXT NOT NULL,
 	latitude REAL,
@@ -38,7 +55,6 @@ CREATE TABLE weather(
 		ON UPDATE CASCADE
 		ON DELETE CASCADE	
 );
-
 
 SELECT * FROM weather WHERE date_record_saved_utc BETWEEN '2024-04-02 15:59:59' AND '2024-04-02 23:59:59' AND location_id == 2;
 
