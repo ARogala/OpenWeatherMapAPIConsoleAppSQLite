@@ -10,6 +10,12 @@
         private float? _latitude;
         private float? _longitude;
 
+        //added empty constructor for GetLocationAtId in ManageSQL
+        public SavedLocations()
+        {
+
+        }
+
         public SavedLocations(string city, string stateCode, string countryCode, int locationID, int isDefault, float? latitude = null, float? longitude = null)
         {
             _city = city;

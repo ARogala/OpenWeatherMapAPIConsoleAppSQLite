@@ -231,6 +231,15 @@ namespace OpenWeatherMap
                         menuSelection = "short";
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
+                    case "Test Get location":
+                        locationId = ChooseLocation();
+                        SavedLocations testLocation = ManageSQL.GetLocationAtId(locationId);
+                        AnsiConsole.WriteLine(testLocation.City);
+                        AnsiConsole.WriteLine(testLocation.StateCode);
+                        AnsiConsole.WriteLine(testLocation.CountryCode);
+                        
+                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        break;
                     case "Quit":
                         CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
                         CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
@@ -333,7 +342,7 @@ namespace OpenWeatherMap
                         "Get celestial data","Get celestial data from a saved location",
                         "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
                         "Add a new location","Switch default location", "Remove a saved location","List all saved locations",
-                        "Cancel Recurring Weather Update","Display short menu","Quit"
+                        "Cancel Recurring Weather Update","Display short menu","Test Get location","Quit"
                     }));
             return choice;
         }

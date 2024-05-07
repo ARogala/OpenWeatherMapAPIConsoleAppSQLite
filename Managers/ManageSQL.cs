@@ -4,6 +4,7 @@ using OpenWeatherMap.Utilities;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,6 +59,50 @@ namespace OpenWeatherMap.Managers
             return locationsList;
         }
 
+        public static SavedLocations GetLocationAtId(int getLocationId)
+        {
+           
+            SavedLocations location = new SavedLocations();
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT location_id,city_name,latitude,longitude,country,state,is_default 
+                        FROM locations WHERE location_id = $getLocationId;
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$getLocationId", getLocationId)
+                    });
+
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int locationId = reader.GetInt32(0);
+                            string cityName = reader.GetString(1);
+                            float? latitude = reader.IsDBNull(2) ? null : reader.GetFloat(2);
+                            float? longitude = reader.IsDBNull(3) ? null : reader.GetFloat(3);
+                            string country = reader.GetString(4);
+                            string state = reader.GetString(5);
+                            int isDefault = reader.GetInt32(6);
+
+                            location = new SavedLocations(cityName,state,country,locationId,isDefault,latitude,longitude);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine($"Failed to get location at id {getLocationId}");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+            return location;
+        }
         //isDefault 0 false 1 true
         public static void SaveLocation(string city, string stateCode, string countryCode, int isDefault, float? latitude = null, float? longitude = null)
         {
