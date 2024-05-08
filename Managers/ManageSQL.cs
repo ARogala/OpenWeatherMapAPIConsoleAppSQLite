@@ -16,6 +16,47 @@ namespace OpenWeatherMap.Managers
     {
         private static string connectionString = $"Data Source={ManageFilePath.GetPath("Weather.db")}";
         private static SqliteConnection connection = new SqliteConnection(connectionString);
+        
+        public static Dictionary<string, bool> GetSettings()
+        {
+            int id = 0;
+            Dictionary<string, bool> settings = new Dictionary<string, bool>();   
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        SELECT display_saved_weather, suppress_header, recurring_update, extended_menu
+                        FROM settings WHERE settings_id = $id
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$id",id)
+                    });
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            settings.Add("Display Saved Weather", reader.GetInt32(0) == 1 ? true : false);
+                            settings.Add("Suppress Header", reader.GetInt32(1) == 1 ? true : false);
+                            settings.Add("Recurring Update", reader.GetInt32(2) == 1 ? true : false);
+                            settings.Add("Extended Menu", reader.GetInt32(3) == 1 ? true : false); 
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to get settings");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+
+            return settings;
+        }
+
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
@@ -344,6 +385,7 @@ namespace OpenWeatherMap.Managers
             }
         }
 
+        //may want to delete weather points for location after edit -- if location changes old weather no longer accurate
         public static void EditLocation(string city, string stateCode, string countryCode, int editLocationId)
         {
             using (connection)

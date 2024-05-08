@@ -24,9 +24,18 @@ namespace OpenWeatherMap
         private static List<Location> location;
         private static CurrentWeather currentWeather;
         private static ForecastWeather forecastWeather;
-
+        //app setting from data base
+        private static Dictionary<string, bool> settings = new Dictionary<string, bool>();
         static async Task Main(string[] args)
         {
+            //get app settings 
+            settings = ManageSQL.GetSettings();
+            /*
+            foreach (KeyValuePair<string,bool> entry in settings)
+            {
+               AnsiConsole.WriteLine(entry.Key + " " + entry.Value);
+            }
+            */
             //CoordinatSharp set default to local time
             GlobalSettings.Allow_Coordinate_DateTimeKind_Specification = true;
             //linux support??
@@ -41,7 +50,7 @@ namespace OpenWeatherMap
                 
             }
 
-            ManageConsoleDisplay.DisplayHeader(true);
+            ManageConsoleDisplay.DisplayHeader(settings["Suppress Header"]);
 
             //load XML Doc
             ManageXML.LoadXML("APIKEY.xml");
@@ -67,7 +76,7 @@ namespace OpenWeatherMap
             CheckForSavedLocations(ManageSQL.GetSavedLocations());
    
             //if saved weather ask to display that or get new data
-            if (ManageSavedWeatherText.GetCurrentLocationText() != "" && ManageSavedWeatherText.GetCurrentWeatherText() != "")
+            if (ManageSavedWeatherText.GetCurrentLocationText() != "" && ManageSavedWeatherText.GetCurrentWeatherText() != "" && settings["Display Saved Weather"] == true)
             {
                 if (AnsiConsole.Confirm("There is saved weather data. Type y to display saved data or n to get new weather."))
                 {
@@ -89,16 +98,28 @@ namespace OpenWeatherMap
             CancellationTokenSource recurringWeatherSource = new CancellationTokenSource();
             CancellationTokenSource recurringStatsAndCelestialSource = new CancellationTokenSource();
             CancellationTokenSource recurringDisplaySavedWeatherSource = new CancellationTokenSource();
-            Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), recurringWeatherSource.Token); });
-            Task updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMinutes(14), recurringStatsAndCelestialSource.Token); });
-            Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMinutes(7), recurringDisplaySavedWeatherSource.Token); });
-            //leave in to test recurring methods
-            //Task updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromSeconds(60), recurringWeatherSource.Token); });
-            //Task updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMilliseconds(14000), recurringStatsAndCelestialSource.Token); });
-            //Task updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMilliseconds(7000), recurringDisplaySavedWeatherSource.Token); });
+            Task updateWeatherRecurring;
+            Task updateStatsAndCelestialRecurring;
+            Task updateDisplaySavedWeatherRecurring;
+            if (settings["Recurring Update"] == true)
+            {
+                updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromHours(1), recurringWeatherSource.Token); });
+                updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMinutes(14), recurringStatsAndCelestialSource.Token); });
+                updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMinutes(7), recurringDisplaySavedWeatherSource.Token); });
+                //leave in to test recurring methods
+                //updateWeatherRecurring = Task.Run(() => { RecurringWeather(TimeSpan.FromSeconds(60), recurringWeatherSource.Token); });
+                //updateStatsAndCelestialRecurring = Task.Run(() => { RecurringStatsAndCelestial(TimeSpan.FromMilliseconds(14000), recurringStatsAndCelestialSource.Token); });
+                //updateDisplaySavedWeatherRecurring = Task.Run(() => { RecurringDisplaySavedWeather(TimeSpan.FromMilliseconds(7000), recurringDisplaySavedWeatherSource.Token); });
+            }
+            else
+            {
+                updateWeatherRecurring = Task.CompletedTask;
+                updateStatsAndCelestialRecurring = Task.CompletedTask;
+                updateDisplaySavedWeatherRecurring = Task.CompletedTask;
+            }
 
-            // Ask for the user's choice
-            string menuSelection = "short";
+            //set the user's menu choice
+            string menuSelection = settings["Extended Menu"] == false ? "short" : "extended";
             string choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
             
             //loop to keep application running and display choices.
@@ -405,7 +426,7 @@ namespace OpenWeatherMap
         private static void ClearConsole()
         {
             AnsiConsole.Clear();
-            ManageConsoleDisplay.DisplayHeader(true);
+            ManageConsoleDisplay.DisplayHeader(settings["Suppress Header"]);
         }
         
         private static async Task GetCurrentWeatherOrForecast(GetLocationFor locationFor, bool defaultLocation, int? atLocationId = null)
