@@ -234,6 +234,8 @@ See in code comments for other documentation
 
 The Data folder contains the text files for the saved weather and forecast data, the xml for the API key, 
 the SQLite Weather.db file, and a sql script file showing how the tables are structured.
+I have been using [DB Browser for SQLite](https://sqlitebrowser.org/) to view, query, edit, and create the table 
+for Weather.db.
 
 The Managers folder contains static classes with methods needed for app functionality. 
 This was a good way to factor out and organize the methods needed for app functionality into classes. 
@@ -266,7 +268,7 @@ Add alerts -- just red text on weather and or statistics ouput
 * Bad weather/rain alert 
     * may end up saving some forecast data to database to do this. Then remove text base app state feature. 
 
-Add settings options to let the user
+Add settings options to let the user --- in progress
 * Prevent the app from asking to display saved weather everytime and just automatically update on start
 * Suppress or show the header
 * Prevent the recurring update from starting
