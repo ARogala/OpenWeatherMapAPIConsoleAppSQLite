@@ -16,7 +16,9 @@ namespace OpenWeatherMap.Managers
     {
         private static string connectionString = $"Data Source={ManageFilePath.GetPath("Weather.db")}";
         private static SqliteConnection connection = new SqliteConnection(connectionString);
-        
+
+        //settings table set up to have a max of 1 row, thus id always 0
+        //Will only ever UPDATE settings table. Never INSERT a new ROW
         public static Dictionary<string, bool> GetSettings()
         {
             int id = 0;
@@ -57,6 +59,38 @@ namespace OpenWeatherMap.Managers
             return settings;
         }
 
+        public static void UpdateSettings(int displaySavedWeather, int suppressHeader, int recurringUpdate, int updateMenu)
+        {
+            int id = 0;
+            using (connection)
+            {
+                try
+                {
+                    connection.Open();
+
+                    SqliteCommand command = connection.CreateCommand();
+                    command.CommandText =
+                    @"
+                        UPDATE settings SET display_saved_weather = $displaySavedWeather, suppress_header = $suppressHeader, 
+                        recurring_update = $recurringUpdate, extended_menu = $updateMenu
+                        WHERE settings_id = $id
+                    ";
+                    command.Parameters.AddRange(new[] {
+                        new SqliteParameter("$displaySavedWeather",displaySavedWeather),
+                        new SqliteParameter("$suppressHeader",suppressHeader),
+                        new SqliteParameter("$recurringUpdate",recurringUpdate),
+                        new SqliteParameter("$updateMenu",updateMenu),
+                        new SqliteParameter("$id",id)
+                    });
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    AnsiConsole.WriteLine("Failed to update settings");
+                    AnsiConsole.WriteException(e);
+                }
+            }
+        }
         public static List<SavedLocations> GetSavedLocations()
         {
             List<SavedLocations> locationsList = new List<SavedLocations>();
