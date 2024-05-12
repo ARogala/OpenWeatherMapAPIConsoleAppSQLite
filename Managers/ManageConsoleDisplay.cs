@@ -51,6 +51,8 @@ namespace OpenWeatherMap.Managers
 
             List<Markup> lunarMarkup = new List<Markup>();
             //moon and sun set/rise can be null best to check
+            //this seems odd and i observed one day that it returned MoonSet == null (No Set) while also returning IsMoonUp == FALSE
+            //how can the moon have No Set but also NOT be UP? look into this. Maybe take out check and just display whatever it returns.
             if (coord.CelestialInfo.MoonRise == null || coord.CelestialInfo.MoonSet == null)
             {
                 lunarMarkup.Add(new Markup($"[bold green]Moon Condition [/]{coord.CelestialInfo.MoonCondition}"));
