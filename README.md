@@ -38,6 +38,13 @@ Multiple locations can be added and entered locations can be edited.
 Locations can be deleted but note that deleting a location will drop all 
 weather points saved in the database for that location.
 
+There is a settings option to let the user
+* Toggle the app from asking to display saved weather on start. Option "Display Saved Weather"
+* Suppress or show the header. Option "Suppress Header"
+* Prevent the recurring update from starting. Option "Recurring Update"
+    * Note: Setting Recurring Update from false to true requires reboot 
+* Display short or long menu by default. Option "Extended Menu"
+
 Locations outside the US can be selected just follow the directions in the app.<br/>
 Note: You may have to experiment a bit to get the correct location. Sometimes city names are not found.
 For example, for some reason, the API wouldn't find Parker CO so I used Centennial CO -- a town or two north. 
@@ -61,8 +68,7 @@ the temperature of the time when the update button was repeatedly pressed.
 If the user would like to collect data and see 8 hour averages it is best 
 to let the app run and collect the data automatically.
 
-This hourly update feature can be stopped with an option in the extended menu.
-I plan to add a settings feature allowing the user to toggle the hourly update on or off. 
+This hourly update feature can be stopped with an option in the extended menu and settings.
 This would be useful for desktop use cases when the user just wants to check the weather 
 and forecast occassionally throughout the day but is not looking to build a database of values. 
 
@@ -267,12 +273,6 @@ Add alerts -- just red text on weather and or statistics ouput
 * Equinox/solistice today
 * Bad weather/rain alert 
     * may end up saving some forecast data to database to do this. Then remove text base app state feature. 
-
-Add settings options to let the user --- in progress
-* Prevent the app from asking to display saved weather everytime and just automatically update on start
-* Suppress or show the header
-* Prevent the recurring update from starting
-* Display short or long menu by default
 
 Add the air pollution end point https://openweathermap.org/api/air-pollution 
 
