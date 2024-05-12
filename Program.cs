@@ -240,6 +240,29 @@ namespace OpenWeatherMap
                         ListAllSavedLocations();
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
                         break;
+                    case "Settings":
+                        //get new settings from user -- the list contains only the checked == true keys
+                        List<string> newSettings = SettingsPrompt(settings);
+                        //build a new setting dictionary containing the updated settings and save that to the database
+                        //then update the global settings variable, adjust menu choice, and cancel recurring update if that was selected
+                        //this works fine but would be best to check if setting changed 1st before saving to database and adjusting menu and recurring
+                        Dictionary<string, bool> newSettingsDict = NewSettings(newSettings);
+                        ManageSQL.UpdateSettings(
+                                newSettingsDict["Display Saved Weather"] == true ? 1 : 0,
+                                newSettingsDict["Suppress Header"] == true ? 1 : 0,
+                                newSettingsDict["Recurring Update"] == true ? 1 : 0,
+                                newSettingsDict["Extended Menu"] == true ? 1 : 0
+                            );
+                        settings = ManageSQL.GetSettings();
+                        menuSelection = settings["Extended Menu"] == false ? "short" : "extended";
+                        if (settings["Recurring Update"] == false)
+                        {
+                            CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
+                            CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
+                            CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
+                        }
+                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        break;
                     case "Clear Console":
                         ClearConsole();
                         choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
@@ -360,7 +383,7 @@ namespace OpenWeatherMap
                         "Get celestial data","Get celestial data from a saved location",
                         "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
                         "Add a new location","Switch default location","Edit a saved location", "Remove a saved location","List all saved locations",
-                        "Cancel Recurring Weather Update","Display short menu","Quit"
+                        "Cancel Recurring Weather Update","Display short menu","Settings","Quit"
                     }));
             return choice;
         }
@@ -373,9 +396,50 @@ namespace OpenWeatherMap
                     .PageSize(5)
                     .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
                     .AddChoices(new[] {
-                        "Clear Console","Update weather","Get 8 hour weather statistics","Get 5 day forecast","Display more options","Quit"
+                        "Clear Console","Update weather","Get 8 hour weather statistics","Get 5 day forecast","Display more options","Settings","Quit"
                     }));
             return choice;
+        }
+
+        private static List<string> SettingsPrompt(Dictionary<string, bool> settings)
+        {
+            List<string> newSettings = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                    .Title("Change your [green]settings[/] \n[blue]Note:[/] Setting Recurring Update from false to true requires reboot")
+                    .NotRequired() // Not required to have a setting checked
+                    .PageSize(5)
+                    .MoreChoicesText("[grey](Move up and down to reveal more settings)[/]")
+                    .InstructionsText(
+                        "[grey](Press [blue]<space>[/] to toggle a setting, " +
+                        "[green]<enter>[/] to accept)[/]")
+                    .AddChoices(new[] {
+                        "Display Saved Weather", "Suppress Header",
+                        "Recurring Update", "Extended Menu"
+                    })
+                    .Select(settings["Display Saved Weather"] == true ? "Display Saved Weather" : "")
+                    .Select(settings["Suppress Header"] == true ? "Suppress Header" : "")
+                    .Select(settings["Recurring Update"] == true ? "Recurring Update" : "")
+                    .Select(settings["Extended Menu"] == true ? "Extended Menu" : ""));
+            return newSettings;
+        }
+
+        private static Dictionary<string, bool> NewSettings(List<string> newSettings)
+        {
+            List<string> settingsKeys = new List<string> { "Display Saved Weather", "Suppress Header", "Recurring Update", "Extended Menu" };
+            Dictionary<string, bool> newSettingsDict = new Dictionary<string, bool>();
+            foreach (string key in settingsKeys)
+            {
+                if (newSettings.Contains(key))
+                {
+                    newSettingsDict.Add(key, true);
+                }
+                else
+                {
+                    newSettingsDict.Add(key, false);
+                }
+            }
+
+            return newSettingsDict;
         }
 
         private static int ChooseLocation()

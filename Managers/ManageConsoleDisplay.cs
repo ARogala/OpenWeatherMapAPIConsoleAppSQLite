@@ -53,7 +53,6 @@ namespace OpenWeatherMap.Managers
             //moon and sun set/rise can be null best to check
             if (coord.CelestialInfo.MoonRise == null || coord.CelestialInfo.MoonSet == null)
             {
-                Console.WriteLine($"Moon Condition {coord.CelestialInfo.MoonCondition}");
                 lunarMarkup.Add(new Markup($"[bold green]Moon Condition [/]{coord.CelestialInfo.MoonCondition}"));
             }
             else
