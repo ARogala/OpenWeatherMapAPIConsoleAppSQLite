@@ -38,13 +38,6 @@ Multiple locations can be added and entered locations can be edited.
 Locations can be deleted but note that deleting a location will drop all 
 weather points saved in the database for that location.
 
-There is a settings option to let the user
-* Toggle the app from asking to display saved weather on start. Option "Display Saved Weather"
-* Suppress or show the header. Option "Suppress Header"
-* Prevent the recurring update from starting. Option "Recurring Update"
-    * Note: Setting Recurring Update from false to true requires reboot 
-* Display short or long menu by default. Option "Extended Menu"
-
 Locations outside the US can be selected just follow the directions in the app.<br/>
 Note: You may have to experiment a bit to get the correct location. Sometimes city names are not found.
 For example, for some reason, the API wouldn't find Parker CO so I used Centennial CO -- a town or two north. 
@@ -74,6 +67,13 @@ and forecast occassionally throughout the day but is not looking to build a data
 
 Both the hourly weather update and the statistics/celestial data features make use of C#'s multithreading 
 capabilities to run tasks on recurring inervals.
+
+There is a settings option to let the user
+* Toggle the app from asking to display saved weather on start. Option "Display Saved Weather"
+* Suppress or show the header. Option "Suppress Header"
+* Prevent the recurring update from starting. Option "Recurring Update"
+    * Note: Setting Recurring Update from false to true requires reboot 
+* Display short or long menu by default. Option "Extended Menu"
 
 The three OpenWeather API endpoints in use are 
 
