@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace OpenWeatherMap.Managers
@@ -72,6 +73,73 @@ namespace OpenWeatherMap.Managers
                 }
             }
             return newDefaultLocationId;
+        }
+
+        public static List<string> GetNewLocationInput()
+        {
+            List<string> input = new List<string>();
+
+            AnsiConsole.WriteLine("Please use ISO 3166 country codes. ");
+            AnsiConsole.Markup("[link]https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes[/]");
+            AnsiConsole.WriteLine("");
+            AnsiConsole.WriteLine("State code (only for the US)");
+            AnsiConsole.WriteLine("Outsite the US? Enter notUS for state and the app will take care of the rest");
+            AnsiConsole.WriteLine("");
+            string inputCity = AnsiConsole.Ask<string>("What [green]City[/] would you like weather for?");
+            string inputStateCode = AskStateCode();
+            string inputCountryCode = AskCountryCode();
+
+            if (inputCity != "" && inputStateCode != "" && inputCountryCode != "")
+            {
+                input.Add(inputCity);
+                input.Add(inputStateCode);
+                input.Add(inputCountryCode);
+            }
+            return input;
+        }
+
+        private static string AskCountryCode()
+        {
+            return AnsiConsole.Prompt(
+               new TextPrompt<string>("And the [green]County Code[/] is? (example US): ")
+               .ValidationErrorMessage("[red]All country codes are 2 characters long and do NOT contain numbers.[/]")
+               .Validate(countryCode =>
+               {
+
+                   if (Regex.IsMatch(countryCode, @"\d") || (Regex.IsMatch(countryCode, @"^[a-zA-Z0-9 ]*$") == false) || countryCode.Length != 2)
+                   {
+                       return ValidationResult.Error("[red]All country codes are 2 characters long and do NOT contain numbers.[/]");
+                   }
+                   else
+                   {
+                       return ValidationResult.Success();
+                   }
+
+               }));
+        }
+
+        private static string AskStateCode()
+        {
+            return AnsiConsole.Prompt(
+                new TextPrompt<string>("What [green]State[/] is that city in? Use abbreviation. (example NH): ")
+                .ValidationErrorMessage("[red]All US state codes are 2 characters long and do NOT contain numbers. Outside the US? Enter (case sensitive) notUS[/]")
+                .Validate(stateCode =>
+                {
+                    if (stateCode.Length > 2 && stateCode != "notUS")
+                    {
+                        return ValidationResult.Error("[red]All US state codes are 2 characters long and do NOT contain numbers. Outside the US? Enter (case sensitive) notUS[/]");
+
+                    }
+                    else if (Regex.IsMatch(stateCode, @"\d") || (Regex.IsMatch(stateCode, @"^[a-zA-Z0-9 ]*$") == false) || (stateCode.Length != 2 && stateCode != "notUS"))
+                    {
+                        return ValidationResult.Error("[red]All US state codes are 2 characters long and do NOT contain numbers. Outside the US? Enter (case sensitive) notUS[/]");
+                    }
+                    else
+                    {
+                        return ValidationResult.Success();
+                    }
+
+                }));
         }
     }
 }
