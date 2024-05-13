@@ -237,7 +237,7 @@ namespace OpenWeatherMap
                         break;
                     case "Settings":
                         //get new settings from user -- the list contains only the checked == true keys
-                        List<string> newSettings = SettingsPrompt(settings);
+                        List<string> newSettings = ManageUserInput.SettingsPrompt(settings);
                         //build a new setting dictionary containing the updated settings and save that to the database
                         //then update the global settings variable, adjust menu choice, and cancel recurring update if that was selected
                         //this works fine but would be best to check if setting changed 1st before saving to database and adjusting menu and recurring
@@ -298,32 +298,6 @@ namespace OpenWeatherMap
             AnsiConsole.WriteLine("");
         }
         
-        
-
-        
-
-        private static List<string> SettingsPrompt(Dictionary<string, bool> settings)
-        {
-            List<string> newSettings = AnsiConsole.Prompt(
-                new MultiSelectionPrompt<string>()
-                    .Title("Change your [green]settings[/] \n[blue]Note:[/] Setting Recurring Update from false to true requires reboot")
-                    .NotRequired() // Not required to have a setting checked
-                    .PageSize(5)
-                    .MoreChoicesText("[grey](Move up and down to reveal more settings)[/]")
-                    .InstructionsText(
-                        "[grey](Press [blue]<space>[/] to toggle a setting, " +
-                        "[green]<enter>[/] to accept)[/]")
-                    .AddChoices(new[] {
-                        "Display Saved Weather", "Suppress Header",
-                        "Recurring Update", "Extended Menu"
-                    })
-                    .Select(settings["Display Saved Weather"] == true ? "Display Saved Weather" : "")
-                    .Select(settings["Suppress Header"] == true ? "Suppress Header" : "")
-                    .Select(settings["Recurring Update"] == true ? "Recurring Update" : "")
-                    .Select(settings["Extended Menu"] == true ? "Extended Menu" : ""));
-            return newSettings;
-        }
-
         private static Dictionary<string, bool> NewSettings(List<string> newSettings)
         {
             List<string> settingsKeys = new List<string> { "Display Saved Weather", "Suppress Header", "Recurring Update", "Extended Menu" };
@@ -343,8 +317,6 @@ namespace OpenWeatherMap
             return newSettingsDict;
         }
 
-        
-       
         private static void CheckForSavedLocations(List<SavedLocations> savedLocationsList)
         {
             if (savedLocationsList.Count == 0)

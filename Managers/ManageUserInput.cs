@@ -151,5 +151,27 @@ namespace OpenWeatherMap.Managers
 
             return newLocation;
         }
+
+        public static List<string> SettingsPrompt(Dictionary<string, bool> settings)
+        {
+            List<string> newSettings = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                    .Title("Change your [green]settings[/] \n[blue]Note:[/] Setting Recurring Update from false to true requires reboot")
+                    .NotRequired() // Not required to have a setting checked
+                    .PageSize(5)
+                    .MoreChoicesText("[grey](Move up and down to reveal more settings)[/]")
+                    .InstructionsText(
+                        "[grey](Press [blue]<space>[/] to toggle a setting, " +
+                        "[green]<enter>[/] to accept)[/]")
+                    .AddChoices(new[] {
+                        "Display Saved Weather", "Suppress Header",
+                        "Recurring Update", "Extended Menu"
+                    })
+                    .Select(settings["Display Saved Weather"] == true ? "Display Saved Weather" : "")
+                    .Select(settings["Suppress Header"] == true ? "Suppress Header" : "")
+                    .Select(settings["Recurring Update"] == true ? "Recurring Update" : "")
+                    .Select(settings["Extended Menu"] == true ? "Extended Menu" : ""));
+            return newSettings;
+        }
     }
 }
