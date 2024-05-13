@@ -141,5 +141,15 @@ namespace OpenWeatherMap.Managers
 
                 }));
         }
+
+        public static List<string> GetDefaultLocation()
+        {
+            AnsiConsole.WriteLine("No saved or default location found please enter one.");
+            AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
+            AnsiConsole.WriteLine("Note: If you removed all locations or removed your default location you will be immediately asked to add one -- the app needs location to work.");
+            List<string> newLocation = ManageUserInput.GetNewLocationInput();
+
+            return newLocation;
+        }
     }
 }

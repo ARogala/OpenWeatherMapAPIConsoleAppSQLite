@@ -151,7 +151,9 @@ namespace OpenWeatherMap
                         int? defaultRow = ManageSQL.HasDefaultLocation();
                         if(defaultRow == 0 && rowCount == 0)
                         {
-                            GetAndSaveDefaultLocation();
+                            List<string> newDefaultLocation = ManageUserInput.GetDefaultLocation();
+                            //isDefault 0 false 1 true
+                            ManageSQL.SaveLocation(newDefaultLocation[0], newDefaultLocation[1], newDefaultLocation[2], 1);
                         }
                         else if (defaultRow == 0 && rowCount != 0)
                         {
@@ -347,19 +349,10 @@ namespace OpenWeatherMap
         {
             if (savedLocationsList.Count == 0)
             {
-                GetAndSaveDefaultLocation();
+                List<string> newDefaultLocation = ManageUserInput.GetDefaultLocation();
+                //isDefault 0 false 1 true
+                ManageSQL.SaveLocation(newDefaultLocation[0], newDefaultLocation[1], newDefaultLocation[2], 1);
             }
-        }
-
-        private static void GetAndSaveDefaultLocation()
-        {
-            AnsiConsole.WriteLine("No saved or default location found please enter one.");
-            AnsiConsole.WriteLine("Note: The location you enter here will be your default location.");
-            AnsiConsole.WriteLine("Note: If you removed all locations or removed your default location you will be immediately asked to add one -- the app needs location to work.");
-            List<string> newLocation = ManageUserInput.GetNewLocationInput();
-
-            //isDefault 0 false 1 true
-            ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2], 1);
         }
 
         private static void ClearConsole()
