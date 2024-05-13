@@ -243,6 +243,14 @@ the SQLite Weather.db file, and a sql script file showing how the tables are str
 I have been using [DB Browser for SQLite](https://sqlitebrowser.org/) to view, query, edit, and create the table 
 for Weather.db.
 
+There is also a DevWeather.db file that has some locations and weather data for use during development.
+Just comment or uncomment the top lines in ManageSQL.cs
+
+```
+ private static string connectionString = $"Data Source={ManageFilePath.GetPath("Weather.db")}";
+ //private static string connectionString = $"Data Source={ManageFilePath.GetPath("DevWeather.db")}";
+```
+
 The Managers folder contains static classes with methods needed for app functionality. 
 This was a good way to factor out and organize the methods needed for app functionality into classes. 
 Their names are self descriptive. However the **ManageSavedWeatherText.cs** class manages the text files for both

@@ -15,6 +15,7 @@ namespace OpenWeatherMap.Managers
     internal static class ManageSQL
     {
         private static string connectionString = $"Data Source={ManageFilePath.GetPath("Weather.db")}";
+        //private static string connectionString = $"Data Source={ManageFilePath.GetPath("DevWeather.db")}";
         private static SqliteConnection connection = new SqliteConnection(connectionString);
 
         //settings table set up to have a max of 1 row, thus id always 0
