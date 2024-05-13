@@ -238,23 +238,29 @@ namespace OpenWeatherMap
                     case "Settings":
                         //get new settings from user -- the list contains only the checked == true keys
                         List<string> newSettings = ManageUserInput.SettingsPrompt(settings);
-                        //build a new setting dictionary containing the updated settings and save that to the database
-                        //then update the global settings variable, adjust menu choice, and cancel recurring update if that was selected
-                        //this works fine but would be best to check if setting changed 1st before saving to database and adjusting menu and recurring
+                        //build a new setting dictionary containing the updated settings 
                         Dictionary<string, bool> newSettingsDict = NewSettings(newSettings);
-                        ManageSQL.UpdateSettings(
-                                newSettingsDict["Display Saved Weather"] == true ? 1 : 0,
-                                newSettingsDict["Suppress Header"] == true ? 1 : 0,
-                                newSettingsDict["Recurring Update"] == true ? 1 : 0,
-                                newSettingsDict["Extended Menu"] == true ? 1 : 0
-                            );
-                        settings = ManageSQL.GetSettings();
-                        menuSelection = settings["Extended Menu"] == false ? "short" : "extended";
-                        if (settings["Recurring Update"] == false)
+                        //check if newSettingsDict is equal to the current settings -- method assumes that the dictionaries have the same keys
+                        bool areEqual = settings.OrderBy(kv => kv.Key).SequenceEqual(newSettingsDict.OrderBy(kv => kv.Key));
+                        //if not equal 
+                        //save new setting to database
+                        //then update the global settings variable, adjust menu choice, and cancel recurring update if that was selected
+                        if (!areEqual)
                         {
-                            CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
-                            CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
-                            CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
+                            ManageSQL.UpdateSettings(
+                                    newSettingsDict["Display Saved Weather"] == true ? 1 : 0,
+                                    newSettingsDict["Suppress Header"] == true ? 1 : 0,
+                                    newSettingsDict["Recurring Update"] == true ? 1 : 0,
+                                    newSettingsDict["Extended Menu"] == true ? 1 : 0
+                                );
+                            settings = ManageSQL.GetSettings();
+                            menuSelection = settings["Extended Menu"] == false ? "short" : "extended";
+                            if (settings["Recurring Update"] == false)
+                            {
+                                CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
+                                CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
+                                CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
+                            }
                         }
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
