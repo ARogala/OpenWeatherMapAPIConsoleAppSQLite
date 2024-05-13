@@ -30,12 +30,7 @@ namespace OpenWeatherMap
         {
             //get app settings 
             settings = ManageSQL.GetSettings();
-            /*
-            foreach (KeyValuePair<string,bool> entry in settings)
-            {
-               AnsiConsole.WriteLine(entry.Key + " " + entry.Value);
-            }
-            */
+            
             //CoordinatSharp set default to local time
             GlobalSettings.Allow_Coordinate_DateTimeKind_Specification = true;
             //linux support??
