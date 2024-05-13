@@ -114,7 +114,7 @@ namespace OpenWeatherMap
 
             //set the user's menu choice
             string menuSelection = settings["Extended Menu"] == false ? "short" : "extended";
-            string choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+            string choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
             
             //loop to keep application running and display choices.
             bool quit = false;
@@ -127,18 +127,18 @@ namespace OpenWeatherMap
                         List<string> newLocation = GetNewLocationInput();
                         //isDefault 0 false 1 true
                         ManageSQL.SaveLocation(newLocation[0], newLocation[1], newLocation[2],0);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Switch default location":
                         locationId = ChooseLocation();
                         ManageSQL.ChangeDefaultLocation(locationId);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Edit a saved location":
                         locationId = ChooseLocation();
                         List<string> editLocation = GetNewLocationInput();
                         ManageSQL.EditLocation(editLocation[0], editLocation[1], editLocation[2], locationId);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Remove a saved location":
                         //get location ID to remove
@@ -161,18 +161,18 @@ namespace OpenWeatherMap
                             ManageSQL.ChangeDefaultLocation(locationId);
                         }
 
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Update weather":
                         await GetCurrentWeatherOrForecast(GetLocationFor.weather, true);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get weather from a saved location":
                         locationId = ChooseLocation();
                         await GetCurrentWeatherOrForecast(GetLocationFor.weather, false, locationId);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Display saved weather":
                         if (ManageSavedWeatherText.GetCurrentWeatherText() != "")
@@ -183,30 +183,30 @@ namespace OpenWeatherMap
                         {
                             AnsiConsole.MarkupLine("[bold red]There is no saved weather data.[/]");
                         }
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 8 hour weather statistics":
                         AnsiConsole.Write(GetStatistics(8));
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 12 hour weather statistics":
                         AnsiConsole.Write(GetStatistics(12));
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 24 hour weather statistics":
                         AnsiConsole.Write(GetStatistics(24));
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 5 day forecast":
                         await GetCurrentWeatherOrForecast(GetLocationFor.forecast, true);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 5 day forecast from a saved location":
                         locationId = ChooseLocation();
                         await GetCurrentWeatherOrForecast(GetLocationFor.forecast, false, locationId);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Display saved forecast":
                         if (ManageSavedWeatherText.GetForecastText() != "")
@@ -217,22 +217,22 @@ namespace OpenWeatherMap
                         {
                             AnsiConsole.MarkupLine("[bold red]There is no saved forecast data.[/]");
                         }
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get celestial data":
                         List<Location> defaultLocation = await ManageAPICalls.GetLocation(GetLocationFor.celestial, true);
                         AnsiConsole.Write(ManageConsoleDisplay.DisplayCelestialData(defaultLocation));
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get celestial data from a saved location":
                         locationId = ChooseLocation();
                         List<Location> locationCelestial = await ManageAPICalls.GetLocation(GetLocationFor.celestial, false, locationId);
                         AnsiConsole.Write(ManageConsoleDisplay.DisplayCelestialData(locationCelestial));
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "List all saved locations":
                         ListAllSavedLocations();
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Settings":
                         //get new settings from user -- the list contains only the checked == true keys
@@ -255,25 +255,25 @@ namespace OpenWeatherMap
                             CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
                             CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
                         }
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Clear Console":
                         ClearConsole();
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Cancel Recurring Weather Update":
                         CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
                         CancelRecurringStatsAndCelestial(recurringStatsAndCelestialSource, updateStatsAndCelestialRecurring);
                         CancelRecurringDisplaySavedWeather(recurringDisplaySavedWeatherSource, updateDisplaySavedWeatherRecurring);
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Display more options":
                         menuSelection = "extended";
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Display short menu":
                         menuSelection = "short";
-                        choice = menuSelection == "short" ? GetShortChoice() : GetChoice();
+                        choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Quit":
                         CancelRecurringWeather(recurringWeatherSource, updateWeatherRecurring);
@@ -362,37 +362,6 @@ namespace OpenWeatherMap
                     }
                         
                 }));
-        }
-
-        private static string GetChoice()
-        {
-            string choice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Please select an option below")
-                    .PageSize(5)
-                    .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
-                    .AddChoices(new[] {
-                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather",
-                        "Get 5 day forecast","Get 5 day forecast from a saved location","Display saved forecast",
-                        "Get celestial data","Get celestial data from a saved location",
-                        "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
-                        "Add a new location","Switch default location","Edit a saved location", "Remove a saved location","List all saved locations",
-                        "Cancel Recurring Weather Update","Display short menu","Settings","Quit"
-                    }));
-            return choice;
-        }
-
-        private static string GetShortChoice()
-        {
-            string choice = AnsiConsole.Prompt(
-                new SelectionPrompt<string>()
-                    .Title("Please select an option below")
-                    .PageSize(5)
-                    .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
-                    .AddChoices(new[] {
-                        "Clear Console","Update weather","Get 8 hour weather statistics","Get 5 day forecast","Display more options","Settings","Quit"
-                    }));
-            return choice;
         }
 
         private static List<string> SettingsPrompt(Dictionary<string, bool> settings)

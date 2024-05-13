@@ -16,5 +16,35 @@ namespace OpenWeatherMap.Managers
             return inputApiKey;
         }
 
+        public static string GetChoice()
+        {
+            string choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Please select an option below")
+                    .PageSize(5)
+                    .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
+                    .AddChoices(new[] {
+                        "Clear Console","Update weather","Get weather from a saved location","Display saved weather",
+                        "Get 5 day forecast","Get 5 day forecast from a saved location","Display saved forecast",
+                        "Get celestial data","Get celestial data from a saved location",
+                        "Get 8 hour weather statistics","Get 12 hour weather statistics","Get 24 hour weather statistics",
+                        "Add a new location","Switch default location","Edit a saved location", "Remove a saved location","List all saved locations",
+                        "Cancel Recurring Weather Update","Display short menu","Settings","Quit"
+                    }));
+            return choice;
+        }
+
+        public static string GetShortChoice()
+        {
+            string choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Please select an option below")
+                    .PageSize(5)
+                    .MoreChoicesText("[green](Move up and down to reveal more choices)[/]")
+                    .AddChoices(new[] {
+                        "Clear Console","Update weather","Get 8 hour weather statistics","Get 5 day forecast","Display more options","Settings","Quit"
+                    }));
+            return choice;
+        }
     }
 }
