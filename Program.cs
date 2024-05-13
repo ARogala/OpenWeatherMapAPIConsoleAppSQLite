@@ -12,14 +12,13 @@ namespace OpenWeatherMap
     public enum GetLocationFor { weather, forecast, airPollution, celestial }
     internal class Program
     {
-        //APIKEY.xml stores the apiKey
-        //string apiKey is used for api call
-        private static string apiKey = String.Empty;
-
         //Weather.db is SQLite database it stores locations and weather events for the locations
         //SavedLocation.cs is is the class that stores location values from database
         //Location.cs is record class that stores api returned data
-        private static List<SavedLocations> savedLocationsList;
+
+        //APIKEY.xml stores the apiKey
+        //string apiKey is used for api call
+        private static string apiKey = String.Empty;
 
         private static List<Location> location;
         private static CurrentWeather currentWeather;
@@ -130,19 +129,19 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Switch default location":
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         ManageSQL.ChangeDefaultLocation(locationId);
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Edit a saved location":
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         List<string> editLocation = GetNewLocationInput();
                         ManageSQL.EditLocation(editLocation[0], editLocation[1], editLocation[2], locationId);
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Remove a saved location":
                         //get location ID to remove
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         //remove it
                         ManageSQL.RemoveSavedLocation(locationId);
                         //check if last location was removed -- if true add new one
@@ -157,7 +156,7 @@ namespace OpenWeatherMap
                         else if (defaultRow == 0 && rowCount != 0)
                         {
                             AnsiConsole.WriteLine("You removed your default location please pick another one");
-                            locationId = ChooseLocation();
+                            locationId = ManageUserInput.ChooseLocation();
                             ManageSQL.ChangeDefaultLocation(locationId);
                         }
 
@@ -169,7 +168,7 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get weather from a saved location":
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         await GetCurrentWeatherOrForecast(GetLocationFor.weather, false, locationId);
                         ManageConsoleDisplay.DisplayCurrentWeather(location, currentWeather);
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
@@ -203,7 +202,7 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get 5 day forecast from a saved location":
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         await GetCurrentWeatherOrForecast(GetLocationFor.forecast, false, locationId);
                         ManageConsoleDisplay.DisplayForecastWeather(location, forecastWeather);
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
@@ -225,7 +224,7 @@ namespace OpenWeatherMap
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
                         break;
                     case "Get celestial data from a saved location":
-                        locationId = ChooseLocation();
+                        locationId = ManageUserInput.ChooseLocation();
                         List<Location> locationCelestial = await ManageAPICalls.GetLocation(GetLocationFor.celestial, false, locationId);
                         AnsiConsole.Write(ManageConsoleDisplay.DisplayCelestialData(locationCelestial));
                         choice = menuSelection == "short" ? ManageUserInput.GetShortChoice() : ManageUserInput.GetChoice();
@@ -289,7 +288,7 @@ namespace OpenWeatherMap
 
         private static void ListAllSavedLocations()
         {
-            savedLocationsList = ManageSQL.GetSavedLocations();
+            List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
             foreach (SavedLocations  location in savedLocationsList)
             {
                 AnsiConsole.WriteLine($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}");
@@ -405,31 +404,7 @@ namespace OpenWeatherMap
             return newSettingsDict;
         }
 
-        private static int ChooseLocation()
-        {
-            savedLocationsList = ManageSQL.GetSavedLocations();
-            SelectionPrompt<string> prompt = new SelectionPrompt<string>()
-                .Title("Please select a location below")
-                .PageSize(5)
-                .MoreChoicesText("[green](Move up and down to reveal more choices)[/]");
-
-            foreach (SavedLocations location in savedLocationsList)
-            {
-                prompt.AddChoice($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}");
-            }
-
-            string choice = AnsiConsole.Prompt(prompt);
-            //get new default location id
-            int newDefaultLocationId = 0;
-            foreach (SavedLocations location in savedLocationsList)
-            {
-                if ($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}" == choice)
-                {
-                    newDefaultLocationId = location.LocationId;
-                }
-            }
-            return newDefaultLocationId;
-        }
+        
        
         private static void CheckForSavedLocations(List<SavedLocations> savedLocationsList)
         {

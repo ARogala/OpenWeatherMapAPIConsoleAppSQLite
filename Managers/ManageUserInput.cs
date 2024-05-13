@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using OpenWeatherMap.Models;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,32 @@ namespace OpenWeatherMap.Managers
                         "Clear Console","Update weather","Get 8 hour weather statistics","Get 5 day forecast","Display more options","Settings","Quit"
                     }));
             return choice;
+        }
+
+        public static int ChooseLocation()
+        {
+            List<SavedLocations> savedLocationsList = ManageSQL.GetSavedLocations();
+            SelectionPrompt<string> prompt = new SelectionPrompt<string>()
+                .Title("Please select a location below")
+                .PageSize(5)
+                .MoreChoicesText("[green](Move up and down to reveal more choices)[/]");
+
+            foreach (SavedLocations location in savedLocationsList)
+            {
+                prompt.AddChoice($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}");
+            }
+
+            string choice = AnsiConsole.Prompt(prompt);
+            //get new default location id
+            int newDefaultLocationId = 0;
+            foreach (SavedLocations location in savedLocationsList)
+            {
+                if ($"{location.City} -- {location.StateCode} -- {location.CountryCode} -- default = {location.IsDefalut}" == choice)
+                {
+                    newDefaultLocationId = location.LocationId;
+                }
+            }
+            return newDefaultLocationId;
         }
     }
 }
