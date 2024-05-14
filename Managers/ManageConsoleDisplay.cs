@@ -24,51 +24,53 @@ namespace OpenWeatherMap.Managers
             
             List<Markup> solarMarkup = new List<Markup>();
             //moon and sun set/rise can be null best to check
-            if (coord.CelestialInfo.SunRise == null || coord.CelestialInfo.SunSet == null)
-            {
-                solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
-            }
-            else
-            {
-                DateTime sunRise = (DateTime)coord.CelestialInfo.SunRise;
-                DateTime sunSet = (DateTime)coord.CelestialInfo.SunSet;
-                DateTime solarNoon = (DateTime)coord.CelestialInfo.SolarNoon;
-                DateTime civilDawn = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDawn;
-                DateTime civilDusk = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDusk;
-                solarMarkup.Add(new Markup($"[bold green]Sun Rise: [/]{sunRise.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Sun Set: [/]{sunSet.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Solar Noon: [/]{solarNoon.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Civil Dawn: [/]{civilDawn.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Cival Dusk: [/]{civilDusk.ToString("h:mm tt")}"));
-                solarMarkup.Add(new Markup($"[bold green]Hours of Day: [/]{coord.CelestialInfo.DaySpan.TotalHours.ToString("0.##")}"));
-                solarMarkup.Add(new Markup($"[bold green]Hours of Night: [/]{coord.CelestialInfo.NightSpan.TotalHours.ToString("0.##")}"));
-                //solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
-                //solarMarkup.Add(new Markup($"[bold green]Is Sun Up: [/]{coord.CelestialInfo.IsSunUp}"));  
-            }
+            //https://coordinatesharp.com/DeveloperGuide#checking-celestial-body-conditions
+            DateTime sunRise = DateTime.Now;
+            DateTime sunSet = DateTime.Now;
+            DateTime solarNoon = DateTime.Now;
+            DateTime civilDawn = DateTime.Now;
+            DateTime civilDusk = DateTime.Now;
+            if (coord.CelestialInfo.SunRise != null)
+                sunRise = (DateTime)coord.CelestialInfo.SunRise;
+            if(coord.CelestialInfo.SunSet != null)
+                sunSet = (DateTime)coord.CelestialInfo.SunSet;
+            if(coord.CelestialInfo.SolarNoon != null)
+                solarNoon = (DateTime)coord.CelestialInfo.SolarNoon;
+            if(coord.CelestialInfo.AdditionalSolarTimes.CivilDawn != null)
+                civilDawn = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDawn;
+            if(coord.CelestialInfo.AdditionalSolarTimes.CivilDusk != null)
+                civilDusk = (DateTime)coord.CelestialInfo.AdditionalSolarTimes.CivilDusk;
+            
+            solarMarkup.Add(new Markup($"[bold green]Sun Rise: [/]{(coord.CelestialInfo.SunRise == null ? coord.CelestialInfo.SunCondition : sunRise.ToString("h:mm tt"))}"));
+            solarMarkup.Add(new Markup($"[bold green]Sun Set: [/]{(coord.CelestialInfo.SunSet == null ? coord.CelestialInfo.SunCondition : sunSet.ToString("h:mm tt"))}"));
+            solarMarkup.Add(new Markup($"[bold green]Solar Noon: [/]{(coord.CelestialInfo.SolarNoon == null ? coord.CelestialInfo.SunCondition : solarNoon.ToString("h:mm tt"))}"));
+            solarMarkup.Add(new Markup($"[bold green]Civil Dawn: [/]{(coord.CelestialInfo.AdditionalSolarTimes.CivilDawn == null ? coord.CelestialInfo.SunCondition : civilDawn.ToString("h:mm tt"))}"));
+            solarMarkup.Add(new Markup($"[bold green]Cival Dusk: [/]{(coord.CelestialInfo.AdditionalSolarTimes.CivilDusk == null ? coord.CelestialInfo.SunCondition : civilDusk.ToString("h:mm tt"))}"));
+            solarMarkup.Add(new Markup($"[bold green]Hours of Day: [/]{coord.CelestialInfo.DaySpan.TotalHours.ToString("0.##")}"));
+            solarMarkup.Add(new Markup($"[bold green]Hours of Night: [/]{coord.CelestialInfo.NightSpan.TotalHours.ToString("0.##")}"));
+            //solarMarkup.Add(new Markup($"[bold green]Sun Condition: [/]{coord.CelestialInfo.SunCondition}"));
+            //solarMarkup.Add(new Markup($"[bold green]Is Sun Up: [/]{coord.CelestialInfo.IsSunUp}"));  
+           
             Rows solarRows = new Rows(solarMarkup);
             Panel solarPanel = new Panel(solarRows);
             solarPanel.Header = new PanelHeader($"Solar: {now.ToString("MM/dd/yyyy")}");
 
             List<Markup> lunarMarkup = new List<Markup>();
             //moon and sun set/rise can be null best to check
-            //this seems odd and i observed one day that it returned MoonSet == null (No Set) while also returning IsMoonUp == FALSE
-            //how can the moon have No Set but also NOT be UP? look into this. Maybe take out check and just display whatever it returns.
-            if (coord.CelestialInfo.MoonRise == null || coord.CelestialInfo.MoonSet == null)
-            {
-                lunarMarkup.Add(new Markup($"[bold green]Moon Condition [/]{coord.CelestialInfo.MoonCondition}"));
-            }
-            else
-            {
-                DateTime moonRise = (DateTime)coord.CelestialInfo.MoonRise;
-                DateTime moonSet = (DateTime)coord.CelestialInfo.MoonSet;
-                lunarMarkup.Add(new Markup($"[bold green]Moon Rise: [/]{moonRise.ToString("h:mm tt")}"));
-                lunarMarkup.Add(new Markup($"[bold green]Moon Set: [/]{moonSet.ToString("h:mm tt")}"));
-                lunarMarkup.Add(new Markup($"[bold green]Moon Phase Name: [/]{coord.CelestialInfo.MoonIllum.PhaseName}"));
-                lunarMarkup.Add(new Markup($"[bold green]Moon Fraction: [/]{coord.CelestialInfo.MoonIllum.Fraction.ToString("0.##")}"));
-                lunarMarkup.Add(new Markup($"[bold green]Moon Distance: [/]{string.Format("{0:n0}", coord.CelestialInfo.MoonDistance.Miles)} Miles"));
-                //lunarMarkup.Add(new Markup($"[bold green]Moon Condition: [/]{coord.CelestialInfo.MoonCondition}"));
-                //lunarMarkup.Add(new Markup($"[bold green]Is Moon Up: [/]{coord.CelestialInfo.IsMoonUp}"));
-            }
+            //https://coordinatesharp.com/DeveloperGuide#checking-celestial-body-conditions
+            DateTime moonRise = DateTime.Now;
+            DateTime moonSet = DateTime.Now;
+            if (coord.CelestialInfo.MoonRise != null)
+                moonRise = (DateTime)coord.CelestialInfo.MoonRise;
+            if(coord.CelestialInfo.MoonSet != null)
+                moonSet = (DateTime)coord.CelestialInfo.MoonSet;
+            lunarMarkup.Add(new Markup($"[bold green]Moon Rise: [/]{(coord.CelestialInfo.MoonRise == null ? coord.CelestialInfo.MoonCondition : moonRise.ToString("h:mm tt"))}"));
+            lunarMarkup.Add(new Markup($"[bold green]Moon Set: [/]{(coord.CelestialInfo.MoonSet == null ? coord.CelestialInfo.MoonCondition : moonSet.ToString("h:mm tt"))}"));
+            lunarMarkup.Add(new Markup($"[bold green]Moon Phase Name: [/]{coord.CelestialInfo.MoonIllum.PhaseName}"));
+            lunarMarkup.Add(new Markup($"[bold green]Moon Fraction: [/]{coord.CelestialInfo.MoonIllum.Fraction.ToString("0.##")}"));
+            lunarMarkup.Add(new Markup($"[bold green]Moon Distance: [/]{string.Format("{0:n0}", coord.CelestialInfo.MoonDistance.Miles)} Miles"));
+            //lunarMarkup.Add(new Markup($"[bold green]Moon Condition: [/]{coord.CelestialInfo.MoonCondition}"));
+            //lunarMarkup.Add(new Markup($"[bold green]Is Moon Up: [/]{coord.CelestialInfo.IsMoonUp}"));
             Rows lunarRows = new Rows(lunarMarkup);
             Panel lunarPanel = new Panel(lunarRows);
             lunarPanel.Header = new PanelHeader($"Lunar: {now.ToString("MM/dd/yyyy")}");
