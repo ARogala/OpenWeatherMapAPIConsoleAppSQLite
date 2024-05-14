@@ -26,7 +26,10 @@ In Visual Studio Publish there is a 32 and 64 bit linux arm build that is set up
 The Pi 3 is a 64 bit machine but the standard OS is 32 bit so in that case use the 32 bit build option.
 Running this on a single board PC is the best most efficient bet for building up a weather database.
 There is also a standard linux x64 build that can be used for Ubuntu and of course Windows as well.
-C# is awesome!
+* The publish profiles are in the Properties folder.
+* Right-click on the OpenWeatherMap project (not the OpenWeatherMap solution) and select Publish from the menu.
+* You will likely want to change your Target Location.
+* For more information on publish [click here](https://learn.microsoft.com/en-us/dotnet/core/tutorials/publishing-with-visual-studio?pivots=dotnet-8-0).
 
 ## About
 
