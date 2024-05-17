@@ -374,7 +374,7 @@ namespace OpenWeatherMap.Managers
                     markup.Add(new Markup($"[bold green]Snow Volume Last Hour: [/]{string.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Snow.hr1))} inches"));
                     markup.Add(new Markup($"[bold green]Snow Volume Last 3 Hours: [/]{string.Format("{0:0.0000}", UnitConversions.mmToInch(currentWeather.Snow.hr3))} inches"));
                 }
-                markup.Add(new Markup("[blue]Note: Time is converted to local time. So if you chosen location is far away from your location times will appear incorrectly.[/]"));
+                markup.Add(new Markup("[blue]Note: Time is converted to local time. So if your chosen location is far away from your location times will appear incorrectly.[/]"));
                 markup.Add(new Markup($"[bold green]Time Of Data Calculation: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.UnixTimeStamp, true)}"));
                 markup.Add(new Markup($"[bold green]Sunrise: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunrise, true)}"));
                 markup.Add(new Markup($"[bold green]Sunset: [/]{UnitConversions.UnixTimeStampToDateTime(currentWeather.SunRiseSetUnixStamp.sunset, true)}"));
