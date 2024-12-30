@@ -39,8 +39,8 @@ namespace OpenWeatherMap
                 //Console.WriteLine(Console.LargestWindowHeight);
                 //Console.WriteLine(Console.LargestWindowWidth);
                 //Console.SetWindowSize(150,40);
-                Console.SetWindowSize(150,55);
-                //Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+                //Console.SetWindowSize(150,55);
+                Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 
             }
 
